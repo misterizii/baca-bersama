@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Baca Bersama, laporan membaca guru dan walimurid</title>
+<style>
+:root{--bg:#FBF5E9;--card:#fff;--ink:#2B2118;--mut:#6B5B4B;--pri:#8A3B12;--ok:#2F6B4F;--err:#9B1C1C;--line:#E3D6BF;--edge:#8C7B66;color-scheme:light}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:1rem/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:env(safe-area-inset-bottom,0)}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.25;margin:0}
+h1{font-size:clamp(1.25rem,4vw,1.6rem)}h2{font-size:clamp(1.2rem,3.5vw,1.45rem)}h3{font-size:1.1rem}
+button,input,select,textarea{font:inherit;color:inherit}
+button,summary,select,label[for],label.opt,input[type=radio],a[href]{cursor:pointer}
+:disabled{cursor:not-allowed;opacity:.55}
+:focus-visible{outline:3px solid var(--pri);outline-offset:2px}
+#bar{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;justify-content:space-between;padding:calc(.75rem + env(safe-area-inset-top,0)) 1rem .75rem;border-bottom:2px solid var(--pri);background:var(--card)}
+#bar .nm{font-size:.875rem;color:var(--mut);flex:1;text-align:right}
+.wrap{max-width:46rem;margin:0 auto;padding:1rem 1rem 6rem}
+#nav{display:flex;gap:.5rem;margin-bottom:1rem}
+#nav button{flex:1;min-height:48px;border:1px solid var(--edge);background:var(--card);border-radius:6px;font-weight:600}
+#nav button[aria-current=page]{background:var(--pri);border-color:var(--pri);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem;margin:0 0 .75rem}
+.card h3{margin-bottom:.25rem}
+.row{display:flex;gap:.75rem;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:1rem}
+.mut{color:var(--mut);margin:.15rem 0 .75rem;font-size:.9rem}
+.ok{color:var(--ok)}.err{color:var(--err)}
+.st{padding:1.5rem 1rem;text-align:center;color:var(--mut);border:1px dashed var(--edge);border-radius:10px}
+.st.err{color:var(--err)}
+.btn{min-height:44px;padding:.5rem 1.1rem;border-radius:6px;border:1px solid var(--pri);background:var(--pri);color:#fff;font-weight:600}
+.btn:hover{background:#6F2D0C}.btn:active{transform:translateY(1px)}
+.btn.ghost{background:var(--card);color:var(--pri)}.btn.ghost:hover{background:#F5E8D6}
+label{display:block;font-weight:600;margin:.85rem 0 .25rem}
+input[type=text],input[type=password],input[type=number],select,textarea{width:100%;min-height:44px;padding:.5rem .65rem;border:1px solid var(--edge);border-radius:6px;background:var(--card)}
+textarea{min-height:7rem;resize:vertical}
+fieldset{border:0;padding:0;margin:.85rem 0}legend{font-weight:600;padding:0}
+.opt{display:flex;gap:.6rem;align-items:center;min-height:44px;font-weight:400;margin:.2rem 0}
+.opt input{width:1.3rem;height:1.3rem;flex:none}
+.bacaan{white-space:pre-wrap;font:1.15rem/1.8 Georgia,serif;background:#FFFDF7;border-left:4px solid var(--pri);padding:1rem;border-radius:0 8px 8px 0;margin:.5rem 0 1rem}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:30rem}
+th,td{text-align:left;padding:.65rem .75rem;border-bottom:1px solid var(--line)}
+th{font-size:.85rem;color:var(--mut)}
+.me td{background:#FBEFD9;font-weight:600}
+.lap{border-left:4px solid var(--edge)}.lap.guru{border-left-color:var(--pri)}
+.kode{border:2px solid var(--pri)}.pin{font:700 1.6rem/1.4 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.15em}
+.hint{font-size:.875rem;color:var(--mut);margin:.25rem 0}
+.form-err{color:var(--err);font-weight:600;margin:.75rem 0 0}
+@media(max-width:700px){
+#nav{position:fixed;left:0;right:0;bottom:0;margin:0;padding:.5rem .75rem calc(.5rem + env(safe-area-inset-bottom,0));background:var(--card);border-top:1px solid var(--edge);z-index:5}
+}
+@media(prefers-reduced-motion:no-preference){.btn,#nav button{transition:background-color .15s}}
+</style>
+</head>
+<body>
+<header id="bar" hidden>
+  <h1>Baca Bersama</h1>
+  <span class="nm" id="who"></span>
+  <button class="btn ghost" id="gpin" type="button">Ganti PIN</button>
+  <button class="btn ghost" id="keluar" type="button">Keluar</button>
+</header>
+<div class="wrap">
+  <nav id="nav" aria-label="Menu utama" hidden></nav>
+  <main id="main"></main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const SUPABASE_URL = "ISI_URL_PROYEK_SUPABASE";
+const SUPABASE_KEY = "sb_publishable_2CwX64YUGE4JyLJ-k1e45A_QPiiHywC";
+const DOMAIN = "wali.example.com";
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const JENIS = { baca: "Tugas membaca", pilgan: "Pilihan ganda", esai: "Esai" };
+const TABS = [["tugas","Tugas"],["laporan","Laporan"],["kelas","Kelas"]];
+let S = null, tab = "tugas", halaman = "";
+const sb = (typeof supabase !== "undefined" && SUPABASE_URL.startsWith("https://")) ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+const q = async p => {
+  let r;
+  try { r = await p; } catch (e) { throw new Error("Tidak bisa terhubung. Periksa sinyal internet lalu coba lagi."); }
+  if (r.error) {
+    const m = r.error.message || "";
+    if (/fetch|network/i.test(m)) throw new Error("Tidak bisa terhubung. Periksa sinyal internet lalu coba lagi.");
+    if (/row-level security/i.test(m)) throw new Error("Tidak diizinkan.");
+    if (r.error.code === "23505") throw new Error("Data tersebut sudah ada.");
+    throw new Error(m);
+  }
+  return r;
+};
+const tgl = x => new Date(x).toLocaleDateString("id-ID");
+const acak = n => crypto.getRandomValues(new Uint32Array(1))[0] % n;
+const pinBaru = () => String(100000 + acak(900000));
+
+async function profil(uid) {
+  const r = await q(sb.from("profiles").select("nama,peran,kelas,murid_id,username").eq("id", uid).maybeSingle());
+  if (!r.data) throw new Error("Akun ini belum terdaftar di kelas mana pun. Hubungi guru.");
+  return { nama: r.data.nama, peran: r.data.peran, kelas: r.data.kelas, muridId: r.data.murid_id, username: r.data.username };
+}
+
+function parseIsi(jenis, teks) {
+  const b = String(teks || "").split("\n").map(s => s.trim()).filter(Boolean);
+  if (!b.length) throw new Error("Isi tugas masih kosong.");
+  if (jenis === "baca") return { isi: { teks: b.join("\n") } };
+  if (jenis === "esai") return { isi: { soal: b } };
+  const kunci = [];
+  const soal = b.map((x, i) => {
+    const p = x.split("|").map(s => s.trim()), k = "ABCD".indexOf((p[5] || "").toUpperCase());
+    if (p.length !== 6 || p.slice(0, 5).some(s => !s) || k < 0) throw new Error("Baris " + (i + 1) + " salah format. Gunakan: Soal | A | B | C | D | Kunci (A sampai D).");
+    kunci.push(k); return { q: p[0], opsi: p.slice(1, 5) };
+  });
+  return { isi: { soal }, kunci };
+}
+
+const DB = {
+  async login({ username, pin }) {
+    const id = String(username || "").trim().toLowerCase();
+    const r = await sb.auth.signInWithPassword({ email: id.includes("@") ? id : id + "@" + DOMAIN, password: String(pin || "") });
+    if (r.error) throw new Error(r.error.status === 429 ? "Terlalu banyak percobaan. Coba lagi beberapa menit lagi." : "Nama pengguna atau PIN salah.");
+    try { const p = await profil(r.data.user.id); langgan(); return p; }
+    catch (e) { await sb.auth.signOut(); throw e; }
+  },
+  async daftarTugas() {
+    const [t, j, m] = await Promise.all([
+      q(sb.from("tugas").select("id,judul,jenis,dibuat").order("dibuat", { ascending: false })),
+      q(sb.from("jawaban").select("tugas_id,murid_id")),
+      q(sb.from("murid").select("id", { count: "exact", head: true }))]);
+    return t.data.map(x => ({ id: x.id, judul: x.judul, jenis: x.jenis, tanggal: tgl(x.dibuat), total: m.count,
+      jumlah: j.data.filter(y => y.tugas_id === x.id).length,
+      sudah: j.data.some(y => y.tugas_id === x.id && y.murid_id === S.muridId) }));
+  },
+  async buatTugas({ jenis, judul, isi }) {
+    const p = parseIsi(jenis, isi);
+    await q(sb.rpc("buat_tugas", { p_jenis: jenis, p_judul: judul, p_isi: p.isi, p_kunci: p.kunci || null }));
+  },
+  async detailTugas({ id }) {
+    const t = (await q(sb.from("tugas").select("id,judul,jenis,isi").eq("id", id).single())).data;
+    const ubah = j => ({ data: j.data, skor: j.skor === null ? "" : j.skor, catatan: j.catatan });
+    if (S.peran === "guru") {
+      const [M, J] = await Promise.all([q(sb.from("murid").select("id,nama").order("nama")), q(sb.from("jawaban").select("murid_id,data,skor,catatan").eq("tugas_id", id))]);
+      return { tugas: t, jawaban: M.data.map(m => { const j = J.data.find(x => x.murid_id === m.id); return { muridId: m.id, nama: m.nama, jawab: j ? ubah(j) : null }; }) };
+    }
+    const j = (await q(sb.from("jawaban").select("data,skor,catatan").eq("tugas_id", id).eq("murid_id", S.muridId).maybeSingle())).data;
+    return { tugas: t, jawab: j ? ubah(j) : null };
+  },
+  async kirim({ id, data }) {
+    let isi;
+    if (data.pilih) isi = { pilih: data.pilih.map(x => x === "" ? null : Number(x)) };
+    else if (data.jawab) isi = { jawab: data.jawab.map(x => String(x).trim()) };
+    else isi = { menit: Number(data.menit), salah: Number(data.salah), lancar: data.lancar, catatan: String(data.catatan || "").slice(0, 600) };
+    try { await q(sb.from("jawaban").insert({ tugas_id: id, murid_id: S.muridId, data: isi })); }
+    catch (e) { throw new Error(e.message === "Data tersebut sudah ada." ? "Jawaban sudah pernah dikirim." : e.message); }
+  },
+  async nilai({ id, muridId, skor, catatan }) {
+    const s = skor === "" || skor == null ? null : Math.round(Number(skor));
+    if (s !== null && !(s >= 0 && s <= 100)) throw new Error("Nilai harus 0 sampai 100.");
+    const r = await q(sb.from("jawaban").update({ skor: s, catatan: String(catatan || "").slice(0, 600) }).eq("tugas_id", id).eq("murid_id", muridId).select("id"));
+    if (!r.data.length) throw new Error("Murid ini belum mengirim jawaban.");
+  },
+  async daftarMurid() { return (await q(sb.from("murid").select("id,nama").order("nama"))).data; },
+  async tulisLaporan({ muridId, isi }) {
+    const t = String(isi || "").trim().slice(0, 1500);
+    if (!t) throw new Error("Isi laporan masih kosong.");
+    await q(sb.from("laporan").insert({ murid_id: S.peran === "guru" ? muridId : S.muridId, kelas: S.kelas, dari: S.peran, isi: t }));
+  },
+  async laporan() {
+    const r = await q(sb.from("laporan").select("dari,isi,waktu,murid(nama)").order("waktu", { ascending: false }).limit(100));
+    return r.data.map(l => ({ nama: l.murid ? l.murid.nama : "", dari: l.dari, isi: l.isi, waktu: tgl(l.waktu) }));
+  },
+  async hasilKelas() {
+    return (await q(sb.rpc("hasil_kelas"))).data.map(r => ({ nama: r.nama, selesai: Number(r.selesai), rata: r.rata, lancar: r.lancar }));
+  },
+  async daftarAkun() {
+    const [M, P] = await Promise.all([q(sb.from("murid").select("id,nama").order("nama")), q(sb.from("profiles").select("murid_id,nama,username").eq("peran", "walimurid"))]);
+    return M.data.map(m => { const a = P.data.find(x => x.murid_id === m.id) || {}; return { muridId: m.id, nama: m.nama, wali: a.nama || "", username: a.username || "" }; });
+  },
+  async tambahMurid({ nama, wali }) {
+    const nm = String(nama || "").trim(), nw = String(wali || "").trim();
+    if (!nm || !nw) throw new Error("Nama murid dan nama walimurid wajib diisi.");
+    const dasar = nm.split(/\s+/)[0].toLowerCase().replace(/[^a-z]/g, "").slice(0, 10) || "wali";
+    const tmp = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+    const pin = pinBaru();
+    for (let i = 0; i < 6; i++) {
+      const username = dasar + (100 + acak(900));
+      const r = await tmp.auth.signUp({ email: username + "@" + DOMAIN, password: pin });
+      if (r.error) { if (/already|registered/i.test(r.error.message)) continue; throw new Error(r.error.message); }
+      if (!r.data.user || (r.data.user.identities && !r.data.user.identities.length)) continue;
+      await q(sb.rpc("tambah_murid_wali", { p_user: r.data.user.id, p_nama_murid: nm, p_nama_wali: nw, p_username: username }));
+      return { username, pin };
+    }
+    throw new Error("Gagal membuat nama pengguna. Coba lagi.");
+  },
+  async resetPinWali({ muridId }) {
+    const pin = pinBaru();
+    const r = await q(sb.rpc("reset_pin_wali", { p_murid: muridId, p_pin: pin }));
+    return { username: r.data, pin };
+  }
+};
+
+async function api(aksi, data) {
+  if (!sb) throw new Error("Aplikasi belum dikonfigurasi. Isi SUPABASE_URL dan SUPABASE_KEY di index.html, dan pastikan pustaka Supabase berhasil dimuat.");
+  return DB[aksi](data || {});
+}
+
+function langgan() {
+  sb.removeAllChannels();
+  sb.channel("bb")
+    .on("postgres_changes", { event: "*", schema: "public", table: "laporan" }, () => { if (S && tab === "laporan") daftarLap(); })
+    .on("postgres_changes", { event: "*", schema: "public", table: "jawaban" }, () => { if (S && tab === "tugas" && halaman === "tugas") vTugas(); })
+    .subscribe();
+}
+
+async function keluar(pesan) {
+  S = null;
+  if (sb) { sb.removeAllChannels(); await sb.auth.signOut().catch(() => {}); }
+  paint(pesan);
+}
+
+async function init() {
+  if (sb) {
+    const r = await sb.auth.getSession();
+    if (r.data.session) { try { S = await profil(r.data.session.user.id); langgan(); } catch (e) { await sb.auth.signOut(); } }
+    sb.auth.onAuthStateChange(ev => { if (ev === "SIGNED_OUT" && S) { S = null; paint("Sesi berakhir. Silakan masuk lagi."); } });
+  }
+  paint();
+}
+
+const box = h => { $("#main").innerHTML = h; };
+async function muat(fn) {
+  box('<p class="st" role="status">Memuat data...</p>');
+  try { await fn(); }
+  catch (e) { if (!S) return; box('<p class="st err" role="alert">' + esc(e.message) + '</p><p style="text-align:center"><button class="btn" id="ulang" type="button">Muat ulang</button></p>'); $("#ulang").onclick = () => paint(); }
+}
+
+function paint(pesan) {
+  const masuk = !!S;
+  $("#bar").hidden = !masuk; $("#nav").hidden = !masuk;
+  if (!masuk) return vLogin(pesan);
+  $("#who").textContent = S.nama + ", " + (S.peran === "guru" ? "guru" : "walimurid") + " kelas " + S.kelas;
+  $("#nav").innerHTML = (S.peran === "guru" ? TABS.concat([["kelola", "Kelola"]]) : TABS).map(t => '<button type="button" data-tab="' + t[0] + '"' + (t[0] === tab ? ' aria-current="page"' : '') + '>' + t[1] + '</button>').join("");
+  ({ tugas: vTugas, laporan: vLaporan, kelas: vKelas, kelola: vKelola })[tab]();
+}
+
+function vLogin(pesan) {
+  box('<h2>Masuk</h2><p class="mut">Walimurid masuk dengan nama pengguna dan PIN dari guru. Guru masuk dengan email dan kata sandi.</p>' +
+    '<form id="fl" class="card"><label for="u">Nama pengguna atau email</label><input id="u" type="text" autocomplete="username" required>' +
+    '<label for="p">PIN atau kata sandi</label><input id="p" type="password" autocomplete="current-password" required>' +
+    '<p class="form-err" id="le" role="alert">' + esc(pesan || "") + '</p>' +
+    '<p><button class="btn" type="submit" id="lb">Masuk</button></p></form>');
+  $("#fl").onsubmit = async ev => {
+    ev.preventDefault(); $("#lb").disabled = true; $("#le").textContent = "";
+    try {
+      S = await api("login", { username: $("#u").value, pin: $("#p").value });
+      tab = "tugas"; paint();
+    } catch (e) { $("#le").textContent = e.message; $("#lb").disabled = false; }
+  };
+}
+
+function vTugas() {
+  halaman = "tugas";
+  muat(async () => {
+    const L = await api("daftarTugas"), g = S.peran === "guru";
+    box('<div class="row"><h2>Tugas kelas ' + esc(S.kelas) + '</h2>' + (g ? '<button class="btn" id="baru" type="button">Buat tugas</button>' : '') + '</div>' +
+      (L.length ? L.map(t => '<article class="card"><h3>' + esc(t.judul) + '</h3><p class="mut">' + JENIS[t.jenis] + ", dibuat " + esc(t.tanggal) + ". " +
+        (g ? t.jumlah + " dari " + t.total + " murid sudah mengirim." : '<strong class="' + (t.sudah ? "ok" : "") + '">' + (t.sudah ? "Sudah dikirim" : "Belum dikerjakan") + "</strong>") +
+        '</p><button class="btn ghost" type="button" data-t="' + esc(t.id) + '">' + (g ? "Lihat dan nilai jawaban" : t.sudah ? "Lihat jawaban dan nilai" : "Kerjakan bersama anak") + '</button></article>').join("")
+        : '<p class="st">' + (g ? 'Belum ada tugas. Tekan "Buat tugas" untuk memberi tugas pertama.' : "Guru belum memberi tugas untuk kelas ini.") + "</p>"));
+  });
+}
+
+function formBaru() {
+  halaman = "detail";
+  box('<h2>Buat tugas</h2><form id="ft" class="card"><label for="j">Jenis tugas</label><select id="j"><option value="baca">Membaca</option><option value="pilgan">Pilihan ganda</option><option value="esai">Esai</option></select>' +
+    '<label for="jd">Judul</label><input id="jd" type="text" required><label for="is" id="il"></label><textarea id="is" required></textarea><p class="hint" id="ih"></p>' +
+    '<p class="form-err" id="te" role="alert"></p><p><button class="btn" type="submit">Kirim tugas ke kelas</button> <button class="btn ghost" type="button" id="bt">Batal</button></p></form>');
+  const ket = { baca: ["Teks bacaan", "Tulis atau tempel teks yang harus dibaca murid."], pilgan: ["Soal pilihan ganda", "Satu soal per baris: Soal | Pilihan A | Pilihan B | Pilihan C | Pilihan D | Kunci (A sampai D)"], esai: ["Pertanyaan esai", "Satu pertanyaan per baris."] };
+  const ub = () => { const k = ket[$("#j").value]; $("#il").textContent = k[0]; $("#ih").textContent = k[1]; };
+  $("#j").onchange = ub; ub(); $("#bt").onclick = vTugas;
+  $("#ft").onsubmit = async ev => {
+    ev.preventDefault();
+    const tb = ev.submitter; tb.disabled = true;
+    try { await api("buatTugas", { jenis: $("#j").value, judul: $("#jd").value, isi: $("#is").value }); vTugas(); }
+    catch (e) { $("#te").textContent = e.message; tb.disabled = false; }
+  };
+}
+
+function ringkas(t, d) {
+  if (t.jenis === "baca") return "<p>Kelancaran: <strong>" + esc(d.lancar) + "</strong>. Lama membaca " + esc(d.menit) + " menit, kata salah " + esc(d.salah) + "." + (d.catatan ? " Catatan walimurid: " + esc(d.catatan) : "") + "</p>";
+  if (t.jenis === "pilgan") return "<p>Pilihan: " + d.pilih.map((p, i) => (i + 1) + "." + "ABCD"[p]).join(", ") + "</p>";
+  return t.isi.soal.map((q, i) => "<p><strong>" + esc(q) + "</strong><br>" + esc(d.jawab[i]) + "</p>").join("");
+}
+
+async function bukaTugas(id) {
+  halaman = "detail";
+  muat(async () => {
+    const D = await api("detailTugas", { id }), t = D.tugas, g = S.peran === "guru";
+    let h = '<p><button class="btn ghost" type="button" id="kb">Kembali ke daftar tugas</button></p><h2>' + esc(t.judul) + '</h2><p class="mut">' + JENIS[t.jenis] + "</p>";
+    if (t.jenis === "baca") h += '<div class="bacaan">' + esc(t.isi.teks) + "</div>";
+    if (g) {
+      h += D.jawaban.map(m => '<article class="card"><h3>' + esc(m.nama) + "</h3>" + (m.jawab
+        ? ringkas(t, m.jawab.data) + '<label for="s' + esc(m.muridId) + '">Nilai (0 sampai 100)</label><input id="s' + esc(m.muridId) + '" type="number" min="0" max="100" value="' + esc(m.jawab.skor) + '">' +
+          '<label for="c' + esc(m.muridId) + '">Hasil evaluasi di sekolah</label><textarea id="c' + esc(m.muridId) + '">' + esc(m.jawab.catatan) + '</textarea>' +
+          '<p class="form-err" id="e' + esc(m.muridId) + '" role="alert"></p><button class="btn" type="button" data-n="' + esc(m.muridId) + '">Simpan penilaian</button>'
+        : '<p class="mut">Belum mengirim.</p>') + "</article>").join("") || '<p class="st">Belum ada murid terdaftar di kelas ini.</p>';
+    } else if (D.jawab) {
+      h += '<div class="card"><h3>Jawaban terkirim</h3>' + ringkas(t, D.jawab.data) + "<p>Nilai: <strong>" + (D.jawab.skor === "" ? "belum dinilai" : esc(D.jawab.skor)) + "</strong></p>" + (D.jawab.catatan ? "<p>Evaluasi guru: " + esc(D.jawab.catatan) + "</p>" : "") + "</div>";
+    } else {
+      h += '<form id="fk" class="card">';
+      if (t.jenis === "baca") h += '<label for="mn">Lama membaca (menit)</label><input id="mn" type="number" min="1" required><label for="sl">Jumlah kata yang salah atau terbata</label><input id="sl" type="number" min="0" required>' +
+        '<fieldset><legend>Kelancaran membaca</legend>' + ["Terbata-bata", "Cukup lancar", "Lancar"].map(x => '<label class="opt"><input type="radio" name="lc" value="' + x + '">' + x + "</label>").join("") + '</fieldset><label for="ct">Catatan untuk guru (boleh kosong)</label><textarea id="ct"></textarea>';
+      else if (t.jenis === "pilgan") h += t.isi.soal.map((s, i) => '<fieldset><legend>' + (i + 1) + ". " + esc(s.q) + "</legend>" + s.opsi.map((o, k) => '<label class="opt"><input type="radio" name="q' + i + '" value="' + k + '">' + "ABCD"[k] + ". " + esc(o) + "</label>").join("") + "</fieldset>").join("");
+      else h += t.isi.soal.map((s, i) => '<label for="a' + i + '">' + (i + 1) + ". " + esc(s) + '</label><textarea id="a' + i + '"></textarea>').join("");
+      h += '<p class="form-err" id="ke" role="alert"></p><button class="btn" type="submit">Kirim laporan dan jawaban</button></form>';
+    }
+    box(h);
+    $("#kb").onclick = vTugas;
+    const fk = $("#fk");
+    if (fk) fk.onsubmit = async ev => {
+      ev.preventDefault();
+      const kb2 = ev.submitter; kb2.disabled = true;
+      const d = {};
+      if (t.jenis === "baca") { const r = fk.querySelector("input[name=lc]:checked"); d.menit = $("#mn").value; d.salah = $("#sl").value; d.lancar = r ? r.value : ""; d.catatan = $("#ct").value; }
+      else if (t.jenis === "pilgan") d.pilih = t.isi.soal.map((_, i) => { const r = fk.querySelector("input[name=q" + i + "]:checked"); return r ? r.value : ""; });
+      else d.jawab = t.isi.soal.map((_, i) => $("#a" + i).value);
+      try { await api("kirim", { id, data: d }); bukaTugas(id); } catch (e) { $("#ke").textContent = e.message; kb2.disabled = false; }
+    };
+  });
+}
+
+async function simpanNilai(id, murid, btn) {
+  const er = $("#e" + murid); er.textContent = ""; btn.disabled = true;
+  try { await api("nilai", { id, muridId: murid, skor: $("#s" + murid).value, catatan: $("#c" + murid).value }); er.textContent = ""; btn.textContent = "Tersimpan"; }
+  catch (e) { er.textContent = e.message; }
+  btn.disabled = false;
+}
+
+let curTugas = "";
+function vLaporan() {
+  const g = S.peran === "guru";
+  muat(async () => {
+    const M = g ? await api("daftarMurid") : [];
+    box('<h2>Laporan perkembangan</h2><p class="mut">' + (g ? "Tulis hasil evaluasi untuk walimurid. Semua laporan kelas tampil di bawah." : "Tulis perkembangan belajar anak di rumah untuk guru, dan baca laporan dari guru.") + '</p>' +
+      '<form id="fm" class="card">' + (g ? '<label for="mu">Untuk murid</label><select id="mu">' + M.map(m => '<option value="' + esc(m.id) + '">' + esc(m.nama) + "</option>").join("") + "</select>" : "") +
+      '<label for="li">Isi laporan</label><textarea id="li" required></textarea><p class="form-err" id="lm" role="alert"></p><p><button class="btn" type="submit">Kirim laporan</button></p></form><div id="dl"></div>');
+    $("#fm").onsubmit = async ev => {
+      ev.preventDefault();
+      const lb = ev.submitter; lb.disabled = true;
+      try { await api("tulisLaporan", { muridId: g ? $("#mu").value : "", isi: $("#li").value }); $("#li").value = ""; $("#lm").textContent = ""; daftarLap(); }
+      catch (e) { $("#lm").textContent = e.message; }
+      lb.disabled = false;
+    };
+    await daftarLap();
+  });
+}
+async function daftarLap() {
+  const el = $("#dl"); if (!el) return;
+  try {
+    const L = await api("laporan");
+    el.innerHTML = L.length ? L.map(l => '<article class="card lap ' + esc(l.dari) + '"><h3>' + esc(l.nama) + '</h3><p class="mut">Dari ' + (l.dari === "guru" ? "guru" : "walimurid") + ", " + esc(l.waktu) + '</p><p style="white-space:pre-wrap;margin:0">' + esc(l.isi) + "</p></article>").join("") : '<p class="st">Belum ada laporan. Laporan pertama akan tampil di sini.</p>';
+  } catch (e) { if ($("#dl")) $("#dl").innerHTML = '<p class="st err" role="alert">' + esc(e.message) + "</p>"; }
+}
+
+function vKelas() {
+  muat(async () => {
+    const R = await api("hasilKelas");
+    box('<h2>Hasil kelas ' + esc(S.kelas) + '</h2><p class="mut">Nilai dan kelancaran membaca semua murid di kelas ini, bisa dilihat guru dan walimurid kelas yang sama.</p>' +
+      (R.length ? '<div class="tbl" tabindex="0" role="region" aria-label="Tabel hasil kelas"><table><thead><tr><th scope="col">Nama murid</th><th scope="col">Tugas selesai</th><th scope="col">Rata-rata nilai</th><th scope="col">Kelancaran terakhir</th></tr></thead><tbody>' +
+        R.map(r => "<tr><th scope=\"row\">" + esc(r.nama) + "</th><td>" + r.selesai + "</td><td>" + (r.rata === null ? "Belum ada" : r.rata) + "</td><td>" + esc(r.lancar || "Belum ada") + "</td></tr>").join("") + "</tbody></table></div>"
+        : '<p class="st">Belum ada murid terdaftar di kelas ini.</p>'));
+  });
+}
+
+const infoPin = (judul, r) => '<div class="card kode"><h3>' + esc(judul) + '</h3><p>Nama pengguna: <strong>' + esc(r.username) + '</strong></p><p>PIN: <strong class="pin">' + esc(r.pin) + '</strong></p><p class="hint">PIN ini tidak akan tampil lagi setelah halaman ditutup. Catat atau kirim ke walimurid sekarang.</p></div>';
+function vKelola(info) {
+  muat(async () => {
+    const A = await api("daftarAkun");
+    box('<h2>Kelola murid dan akun walimurid</h2><p class="mut">Tambahkan murid, dan akun walimurid dibuat otomatis lengkap dengan nama pengguna dan PIN.</p>' +
+      '<form id="fa" class="card"><label for="nm">Nama murid</label><input id="nm" type="text" required><label for="nw">Nama walimurid</label><input id="nw" type="text" required>' +
+      '<p class="form-err" id="ae" role="alert"></p><p><button class="btn" type="submit">Tambah murid dan buat akun</button></p></form><div id="hs" role="status">' + (info || "") + "</div>" +
+      (A.length ? A.map(a => '<article class="card"><h3>' + esc(a.nama) + '</h3><p class="mut">Walimurid: ' + esc(a.wali || "belum ada akun") + (a.username ? ", nama pengguna " + esc(a.username) : "") + "</p>" +
+        (a.username ? '<button class="btn ghost" type="button" data-r="' + esc(a.muridId) + '">Buat PIN baru</button>' : "") + "</article>").join("")
+        : '<p class="st">Belum ada murid di kelas ini. Tambahkan murid pertama lewat formulir di atas.</p>'));
+    $("#fa").onsubmit = async ev => {
+      ev.preventDefault();
+      const sb = ev.submitter; sb.disabled = true;
+      try { const r = await api("tambahMurid", { nama: $("#nm").value, wali: $("#nw").value }); vKelola(infoPin("Akun dibuat untuk walimurid " + $("#nw").value.trim(), r)); }
+      catch (e) { $("#ae").textContent = e.message; sb.disabled = false; }
+    };
+  });
+}
+
+function vPin() {
+  halaman = "detail";
+  box('<h2>Ganti PIN</h2><form id="fp" class="card"><label for="pb">PIN atau kata sandi baru (minimal 6 karakter)</label><input id="pb" type="password" minlength="6" autocomplete="new-password" required>' +
+    '<p class="form-err" id="pe" role="alert"></p><p><button class="btn" type="submit">Simpan PIN baru</button> <button class="btn ghost" type="button" id="pk">Batal</button></p></form>');
+  $("#pk").onclick = () => paint();
+  $("#fp").onsubmit = async ev => {
+    ev.preventDefault();
+    const sb2 = ev.submitter; sb2.disabled = true;
+    const r = await sb.auth.updateUser({ password: $("#pb").value });
+    if (r.error) { $("#pe").textContent = r.error.message; sb2.disabled = false; }
+    else box('<p class="st ok" role="status">PIN berhasil diganti. Gunakan PIN baru saat masuk berikutnya.</p>');
+  };
+}
+
+document.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.id === "keluar") keluar();
+  else if (b.id === "gpin") vPin();
+  else if (b.dataset.tab) { tab = b.dataset.tab; paint(); }
+  else if (b.id === "baru") formBaru();
+  else if (b.dataset.t) { curTugas = b.dataset.t; bukaTugas(curTugas); }
+  else if (b.dataset.r) { b.disabled = true; api("resetPinWali", { muridId: b.dataset.r }).then(r => vKelola(infoPin("PIN baru dibuat", r))).catch(er => { b.disabled = false; $("#hs").innerHTML = '<p class="form-err" role="alert">' + esc(er.message) + "</p>"; }); }
+  else if (b.dataset.n) simpanNilai(curTugas, b.dataset.n, b);
+});
+setInterval(() => { if (S && tab === "laporan" && !document.hidden) daftarLap(); }, 60000);
+init();
+</script>
+</body>
+</html>
