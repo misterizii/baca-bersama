@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Baca Bersama, laporan membaca guru dan walimurid</title>
+<title>Baca Bersama SD Negeri Geger, laporan membaca guru dan walimurid</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preload" as="image" href="logo.png">
 <style>
 :root{--bg:#FBF5E9;--card:#fff;--ink:#2B2118;--mut:#6B5B4B;--pri:#8A3B12;--ok:#2F6B4F;--err:#9B1C1C;--line:#E3D6BF;--edge:#8C7B66;color-scheme:light}
 *{box-sizing:border-box}
@@ -46,6 +48,13 @@ th{font-size:.85rem;color:var(--mut)}
 .me td{background:#FBEFD9;font-weight:600}
 .lap{border-left:4px solid var(--edge)}.lap.guru{border-left-color:var(--pri)}
 .kode{border:2px solid var(--pri)}.pin{font:700 1.6rem/1.4 ui-monospace,Menlo,Consolas,monospace;letter-spacing:.15em}
+.brand{display:flex;align-items:center;gap:.6rem;min-width:0}
+.brand img{width:40px;height:40px;flex:none}
+.brand small{display:block;font-size:.72rem;line-height:1.2;color:var(--mut)}
+.sambut{text-align:center;margin:.5rem 0 1.5rem}
+.sambut img{display:block;width:112px;height:112px;margin:0 auto .75rem}
+.sambut h1{max-width:22rem;margin:0 auto .35rem}
+.sambut p{margin:0;font-weight:700;letter-spacing:.02em}
 .hint{font-size:.875rem;color:var(--mut);margin:.25rem 0}
 .form-err{color:var(--err);font-weight:600;margin:.75rem 0 0}
 @media(max-width:700px){
@@ -56,7 +65,7 @@ th{font-size:.85rem;color:var(--mut)}
 </head>
 <body>
 <header id="bar" hidden>
-  <h1>Baca Bersama</h1>
+  <div class="brand"><img src="logo.png" width="40" height="40" alt="Logo SD Negeri Geger"><div><h1>Baca Bersama</h1><small>SD NEGERI GEGER</small></div></div>
   <span class="nm" id="who"></span>
   <button class="btn ghost" id="gpin" type="button">Ganti PIN</button>
   <button class="btn ghost" id="keluar" type="button">Keluar</button>
@@ -67,7 +76,7 @@ th{font-size:.85rem;color:var(--mut)}
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
-const SUPABASE_URL = "ISI_URL_PROYEK_SUPABASE";
+const SUPABASE_URL = "https://cjbslmqrsgwyhwflruzx.supabase.co";
 const SUPABASE_KEY = "sb_publishable_2CwX64YUGE4JyLJ-k1e45A_QPiiHywC";
 const DOMAIN = "wali.example.com";
 const $ = s => document.querySelector(s);
@@ -243,7 +252,7 @@ function paint(pesan) {
 }
 
 function vLogin(pesan) {
-  box('<h2>Masuk</h2><p class="mut">Walimurid masuk dengan nama pengguna dan PIN dari guru. Guru masuk dengan email dan kata sandi.</p>' +
+  box('<div class="sambut"><img src="logo.png" width="112" height="112" alt="Logo SD Negeri Geger" fetchpriority="high"><h1>Selamat Datang di Aplikasi Baca Bersama</h1><p>SD NEGERI GEGER</p></div><h2>Masuk</h2><p class="mut">Walimurid masuk dengan nama pengguna dan PIN dari guru. Guru masuk dengan email dan kata sandi.</p>' +
     '<form id="fl" class="card"><label for="u">Nama pengguna atau email</label><input id="u" type="text" autocomplete="username" required>' +
     '<label for="p">PIN atau kata sandi</label><input id="p" type="password" autocomplete="current-password" required>' +
     '<p class="form-err" id="le" role="alert">' + esc(pesan || "") + '</p>' +
@@ -299,123 +308,4 @@ async function bukaTugas(id) {
     if (t.jenis === "baca") h += '<div class="bacaan">' + esc(t.isi.teks) + "</div>";
     if (g) {
       h += D.jawaban.map(m => '<article class="card"><h3>' + esc(m.nama) + "</h3>" + (m.jawab
-        ? ringkas(t, m.jawab.data) + '<label for="s' + esc(m.muridId) + '">Nilai (0 sampai 100)</label><input id="s' + esc(m.muridId) + '" type="number" min="0" max="100" value="' + esc(m.jawab.skor) + '">' +
-          '<label for="c' + esc(m.muridId) + '">Hasil evaluasi di sekolah</label><textarea id="c' + esc(m.muridId) + '">' + esc(m.jawab.catatan) + '</textarea>' +
-          '<p class="form-err" id="e' + esc(m.muridId) + '" role="alert"></p><button class="btn" type="button" data-n="' + esc(m.muridId) + '">Simpan penilaian</button>'
-        : '<p class="mut">Belum mengirim.</p>') + "</article>").join("") || '<p class="st">Belum ada murid terdaftar di kelas ini.</p>';
-    } else if (D.jawab) {
-      h += '<div class="card"><h3>Jawaban terkirim</h3>' + ringkas(t, D.jawab.data) + "<p>Nilai: <strong>" + (D.jawab.skor === "" ? "belum dinilai" : esc(D.jawab.skor)) + "</strong></p>" + (D.jawab.catatan ? "<p>Evaluasi guru: " + esc(D.jawab.catatan) + "</p>" : "") + "</div>";
-    } else {
-      h += '<form id="fk" class="card">';
-      if (t.jenis === "baca") h += '<label for="mn">Lama membaca (menit)</label><input id="mn" type="number" min="1" required><label for="sl">Jumlah kata yang salah atau terbata</label><input id="sl" type="number" min="0" required>' +
-        '<fieldset><legend>Kelancaran membaca</legend>' + ["Terbata-bata", "Cukup lancar", "Lancar"].map(x => '<label class="opt"><input type="radio" name="lc" value="' + x + '">' + x + "</label>").join("") + '</fieldset><label for="ct">Catatan untuk guru (boleh kosong)</label><textarea id="ct"></textarea>';
-      else if (t.jenis === "pilgan") h += t.isi.soal.map((s, i) => '<fieldset><legend>' + (i + 1) + ". " + esc(s.q) + "</legend>" + s.opsi.map((o, k) => '<label class="opt"><input type="radio" name="q' + i + '" value="' + k + '">' + "ABCD"[k] + ". " + esc(o) + "</label>").join("") + "</fieldset>").join("");
-      else h += t.isi.soal.map((s, i) => '<label for="a' + i + '">' + (i + 1) + ". " + esc(s) + '</label><textarea id="a' + i + '"></textarea>').join("");
-      h += '<p class="form-err" id="ke" role="alert"></p><button class="btn" type="submit">Kirim laporan dan jawaban</button></form>';
-    }
-    box(h);
-    $("#kb").onclick = vTugas;
-    const fk = $("#fk");
-    if (fk) fk.onsubmit = async ev => {
-      ev.preventDefault();
-      const kb2 = ev.submitter; kb2.disabled = true;
-      const d = {};
-      if (t.jenis === "baca") { const r = fk.querySelector("input[name=lc]:checked"); d.menit = $("#mn").value; d.salah = $("#sl").value; d.lancar = r ? r.value : ""; d.catatan = $("#ct").value; }
-      else if (t.jenis === "pilgan") d.pilih = t.isi.soal.map((_, i) => { const r = fk.querySelector("input[name=q" + i + "]:checked"); return r ? r.value : ""; });
-      else d.jawab = t.isi.soal.map((_, i) => $("#a" + i).value);
-      try { await api("kirim", { id, data: d }); bukaTugas(id); } catch (e) { $("#ke").textContent = e.message; kb2.disabled = false; }
-    };
-  });
-}
-
-async function simpanNilai(id, murid, btn) {
-  const er = $("#e" + murid); er.textContent = ""; btn.disabled = true;
-  try { await api("nilai", { id, muridId: murid, skor: $("#s" + murid).value, catatan: $("#c" + murid).value }); er.textContent = ""; btn.textContent = "Tersimpan"; }
-  catch (e) { er.textContent = e.message; }
-  btn.disabled = false;
-}
-
-let curTugas = "";
-function vLaporan() {
-  const g = S.peran === "guru";
-  muat(async () => {
-    const M = g ? await api("daftarMurid") : [];
-    box('<h2>Laporan perkembangan</h2><p class="mut">' + (g ? "Tulis hasil evaluasi untuk walimurid. Semua laporan kelas tampil di bawah." : "Tulis perkembangan belajar anak di rumah untuk guru, dan baca laporan dari guru.") + '</p>' +
-      '<form id="fm" class="card">' + (g ? '<label for="mu">Untuk murid</label><select id="mu">' + M.map(m => '<option value="' + esc(m.id) + '">' + esc(m.nama) + "</option>").join("") + "</select>" : "") +
-      '<label for="li">Isi laporan</label><textarea id="li" required></textarea><p class="form-err" id="lm" role="alert"></p><p><button class="btn" type="submit">Kirim laporan</button></p></form><div id="dl"></div>');
-    $("#fm").onsubmit = async ev => {
-      ev.preventDefault();
-      const lb = ev.submitter; lb.disabled = true;
-      try { await api("tulisLaporan", { muridId: g ? $("#mu").value : "", isi: $("#li").value }); $("#li").value = ""; $("#lm").textContent = ""; daftarLap(); }
-      catch (e) { $("#lm").textContent = e.message; }
-      lb.disabled = false;
-    };
-    await daftarLap();
-  });
-}
-async function daftarLap() {
-  const el = $("#dl"); if (!el) return;
-  try {
-    const L = await api("laporan");
-    el.innerHTML = L.length ? L.map(l => '<article class="card lap ' + esc(l.dari) + '"><h3>' + esc(l.nama) + '</h3><p class="mut">Dari ' + (l.dari === "guru" ? "guru" : "walimurid") + ", " + esc(l.waktu) + '</p><p style="white-space:pre-wrap;margin:0">' + esc(l.isi) + "</p></article>").join("") : '<p class="st">Belum ada laporan. Laporan pertama akan tampil di sini.</p>';
-  } catch (e) { if ($("#dl")) $("#dl").innerHTML = '<p class="st err" role="alert">' + esc(e.message) + "</p>"; }
-}
-
-function vKelas() {
-  muat(async () => {
-    const R = await api("hasilKelas");
-    box('<h2>Hasil kelas ' + esc(S.kelas) + '</h2><p class="mut">Nilai dan kelancaran membaca semua murid di kelas ini, bisa dilihat guru dan walimurid kelas yang sama.</p>' +
-      (R.length ? '<div class="tbl" tabindex="0" role="region" aria-label="Tabel hasil kelas"><table><thead><tr><th scope="col">Nama murid</th><th scope="col">Tugas selesai</th><th scope="col">Rata-rata nilai</th><th scope="col">Kelancaran terakhir</th></tr></thead><tbody>' +
-        R.map(r => "<tr><th scope=\"row\">" + esc(r.nama) + "</th><td>" + r.selesai + "</td><td>" + (r.rata === null ? "Belum ada" : r.rata) + "</td><td>" + esc(r.lancar || "Belum ada") + "</td></tr>").join("") + "</tbody></table></div>"
-        : '<p class="st">Belum ada murid terdaftar di kelas ini.</p>'));
-  });
-}
-
-const infoPin = (judul, r) => '<div class="card kode"><h3>' + esc(judul) + '</h3><p>Nama pengguna: <strong>' + esc(r.username) + '</strong></p><p>PIN: <strong class="pin">' + esc(r.pin) + '</strong></p><p class="hint">PIN ini tidak akan tampil lagi setelah halaman ditutup. Catat atau kirim ke walimurid sekarang.</p></div>';
-function vKelola(info) {
-  muat(async () => {
-    const A = await api("daftarAkun");
-    box('<h2>Kelola murid dan akun walimurid</h2><p class="mut">Tambahkan murid, dan akun walimurid dibuat otomatis lengkap dengan nama pengguna dan PIN.</p>' +
-      '<form id="fa" class="card"><label for="nm">Nama murid</label><input id="nm" type="text" required><label for="nw">Nama walimurid</label><input id="nw" type="text" required>' +
-      '<p class="form-err" id="ae" role="alert"></p><p><button class="btn" type="submit">Tambah murid dan buat akun</button></p></form><div id="hs" role="status">' + (info || "") + "</div>" +
-      (A.length ? A.map(a => '<article class="card"><h3>' + esc(a.nama) + '</h3><p class="mut">Walimurid: ' + esc(a.wali || "belum ada akun") + (a.username ? ", nama pengguna " + esc(a.username) : "") + "</p>" +
-        (a.username ? '<button class="btn ghost" type="button" data-r="' + esc(a.muridId) + '">Buat PIN baru</button>' : "") + "</article>").join("")
-        : '<p class="st">Belum ada murid di kelas ini. Tambahkan murid pertama lewat formulir di atas.</p>'));
-    $("#fa").onsubmit = async ev => {
-      ev.preventDefault();
-      const sb = ev.submitter; sb.disabled = true;
-      try { const r = await api("tambahMurid", { nama: $("#nm").value, wali: $("#nw").value }); vKelola(infoPin("Akun dibuat untuk walimurid " + $("#nw").value.trim(), r)); }
-      catch (e) { $("#ae").textContent = e.message; sb.disabled = false; }
-    };
-  });
-}
-
-function vPin() {
-  halaman = "detail";
-  box('<h2>Ganti PIN</h2><form id="fp" class="card"><label for="pb">PIN atau kata sandi baru (minimal 6 karakter)</label><input id="pb" type="password" minlength="6" autocomplete="new-password" required>' +
-    '<p class="form-err" id="pe" role="alert"></p><p><button class="btn" type="submit">Simpan PIN baru</button> <button class="btn ghost" type="button" id="pk">Batal</button></p></form>');
-  $("#pk").onclick = () => paint();
-  $("#fp").onsubmit = async ev => {
-    ev.preventDefault();
-    const sb2 = ev.submitter; sb2.disabled = true;
-    const r = await sb.auth.updateUser({ password: $("#pb").value });
-    if (r.error) { $("#pe").textContent = r.error.message; sb2.disabled = false; }
-    else box('<p class="st ok" role="status">PIN berhasil diganti. Gunakan PIN baru saat masuk berikutnya.</p>');
-  };
-}
-
-document.addEventListener("click", e => {
-  const b = e.target.closest("button"); if (!b) return;
-  if (b.id === "keluar") keluar();
-  else if (b.id === "gpin") vPin();
-  else if (b.dataset.tab) { tab = b.dataset.tab; paint(); }
-  else if (b.id === "baru") formBaru();
-  else if (b.dataset.t) { curTugas = b.dataset.t; bukaTugas(curTugas); }
-  else if (b.dataset.r) { b.disabled = true; api("resetPinWali", { muridId: b.dataset.r }).then(r => vKelola(infoPin("PIN baru dibuat", r))).catch(er => { b.disabled = false; $("#hs").innerHTML = '<p class="form-err" role="alert">' + esc(er.message) + "</p>"; }); }
-  else if (b.dataset.n) simpanNilai(curTugas, b.dataset.n, b);
-});
-setInterval(() => { if (S && tab === "laporan" && !document.hidden) daftarLap(); }, 60000);
-init();
-</script>
-</body>
-</html>
+        ? ringkas(t, m.jawab.data) + '<label for="s' + esc(m.muridId) + '">Nilai (0 sampai 100)</label><input
