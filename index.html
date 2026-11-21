@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Baca Bersama - SD Negeri Geger</title>
+<meta name="description" content="Baca Bersama: belajar membaca bersama guru dan orang tua. SD Negeri Geger, Kedungadem, Bojonegoro.">
+<meta name="theme-color" content="#c92f38">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Baca Bersama">
+<style>
+:root{
+  --red:#c92f38;--red-d:#a3232b;--red-l:#fdecec;
+  --green:#1b8a4b;--green-l:#e6f6ec;
+  --orange:#f4811f;--orange-l:#fff1e0;
+  --yellow-l:#fff8d6;
+  --ink:#26211f;--mut:#6b6461;--line:#eadfdc;--bg:#fffaf8;--card:#fff;
+  --r:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;line-height:1.5}
+h1,h2,h3{line-height:1.25;margin:0}
+h2{font-size:1.15rem;margin:4px 0 12px}
+h3{font-size:1.05rem}
+p{margin:6px 0}
+img{max-width:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+input,select,textarea{width:100%;padding:12px;border:2px solid var(--line);border-radius:12px;background:#fff;min-height:48px}
+textarea{resize:vertical;min-height:84px}
+input:focus,select:focus,textarea:focus{outline:3px solid #f7b267;border-color:var(--orange)}
+label{display:block;font-weight:600;font-size:.92rem;margin:12px 0 4px}
+small,.muted{color:var(--mut);font-size:.86rem}
+.pre{white-space:pre-wrap;word-break:break-word}
+.wrap{max-width:640px;margin:0 auto;padding:0 14px}
+
+/* tombol */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:48px;padding:10px 18px;border:2px solid var(--line);border-radius:12px;background:#fff;font-weight:700;cursor:pointer}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--red);border-color:var(--red);color:#fff}
+.btn.primary:active{background:var(--red-d)}
+.btn.green{background:var(--green);border-color:var(--green);color:#fff}
+.btn.danger{color:var(--red);border-color:#f2c4c6;background:#fff}
+.btn.sm{min-height:44px;padding:8px 14px;font-size:.92rem}
+.btn.block{display:flex;width:100%}
+.ibtn{width:48px;height:48px;border:0;background:transparent;font-size:1.5rem;border-radius:12px;cursor:pointer}
+
+/* header & navigasi */
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top));background:#fff;border-bottom:3px solid var(--red)}
+.top img{flex:none}
+.ttl{flex:1;min-width:0;display:flex;flex-direction:column}
+.ttl b{font-size:1.05rem;color:var(--red-d)}
+.ttl small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+main{max-width:640px;margin:0 auto;padding:14px 14px 100px;outline:0}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;display:grid;grid-template-columns:repeat(var(--n),1fr);background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.tabs button{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:60px;padding:6px 4px;border:0;background:transparent;font-size:.78rem;font-weight:700;color:var(--mut);cursor:pointer}
+.tabs button span{font-size:1.35rem;line-height:1}
+.tabs button.on{color:var(--red);box-shadow:inset 0 3px 0 var(--red)}
+.banner{max-width:640px;margin:10px auto 0;padding:12px 14px;background:var(--yellow-l);border:2px solid #f2d36b;border-radius:12px;display:flex;align-items:center;gap:10px;margin-left:14px;margin-right:14px}
+@media(min-width:660px){.banner{margin-left:auto;margin-right:auto}}
+.banner[hidden]{display:none}
+.banner b{flex:1}
+
+/* kartu */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:0 0 12px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+.row{display:flex;align-items:flex-start;gap:8px;justify-content:space-between}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.78rem;font-weight:700;background:var(--red-l);color:var(--red-d);white-space:nowrap}
+.badge.g{background:var(--green-l);color:#14693a}
+.badge.o{background:var(--orange-l);color:#9a4a00}
+.badge.y{background:var(--yellow-l);color:#7a5d00}
+.badge.n{background:#eee;color:#555}
+.note{background:var(--red-l);border-radius:12px;padding:10px 12px;margin:10px 0;font-size:.95rem}
+.reading{font-size:1.25rem;line-height:1.85;background:#fffdf5;border:2px dashed #f4c97a;border-radius:14px;padding:14px;margin:10px 0}
+.done{background:var(--green-l);color:#14693a;border-radius:12px;padding:12px;font-weight:700;margin-top:12px}
+.empty{text-align:center;color:var(--mut);padding:28px 10px}
+.err{border-color:#f2c4c6;background:#fff7f7}
+.skel{text-align:center;color:var(--mut);padding:40px 10px}
+.bar{height:3px;background:linear-gradient(90deg,var(--red),var(--orange),var(--green));position:fixed;left:0;top:0;z-index:60;width:0;transition:width .3s}
+.bar.on{width:80%;transition:width 8s cubic-bezier(.1,.7,.2,1)}
+.prog{height:8px;background:#f0e6e3;border-radius:99px;overflow:hidden;margin:8px 0 2px}
+.prog i{display:block;height:100%;background:var(--green)}
+.scope{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+.scope label{margin:0;white-space:nowrap}
+.fill{color:var(--green);font-style:normal;font-weight:700}
+
+/* form pilihan */
+.pills{display:grid;gap:8px;margin:6px 0}
+.pill,.opt{position:relative;display:block;margin:0;font-weight:600}
+.pill input,.opt input{position:absolute;opacity:0;width:1px;height:1px;min-height:0}
+.pill span,.opt span{display:block;padding:13px 14px;border:2px solid var(--line);border-radius:12px;background:#fff}
+.pill span{text-align:center}
+.pill input:checked+span,.opt input:checked+span{border-color:var(--red);background:var(--red-l)}
+.pill input:focus-visible+span,.opt input:focus-visible+span{outline:3px solid var(--orange)}
+.q{border:0;padding:0;margin:14px 0}
+.q legend{font-weight:700;padding:0;margin-bottom:6px}
+.opts{display:grid;gap:8px}
+details.slot{border:2px solid var(--line);border-radius:12px;padding:0 12px;margin:8px 0;background:#fff}
+details.slot summary{min-height:48px;display:flex;align-items:center;gap:8px;font-weight:700;cursor:pointer}
+details.slot[open]{padding-bottom:12px}
+details.mention{border:2px solid var(--line);border-radius:12px;padding:0 12px;margin:10px 0}
+details.mention summary{min-height:48px;display:flex;align-items:center;cursor:pointer;font-weight:700}
+.chk{display:flex;align-items:center;gap:10px;margin:0;min-height:44px;font-weight:500}
+.chk input{width:22px;height:22px;min-height:0;flex:none}
+
+/* diskusi */
+.bubble{border-radius:16px;padding:12px 14px;margin:0 0 10px;background:#fff;border:1px solid var(--line)}
+.bubble.staff{background:#fff5f5;border-color:#f6d3d5}
+.bubble.parent{background:#f1faf4;border-color:#cfe9d8}
+.bubble.me{box-shadow:0 0 0 3px #f7d77a}
+.bh{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;font-size:.9rem}
+.bh time{margin-left:auto;color:var(--mut);font-size:.78rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{background:var(--yellow-l);border:1px solid #f2d36b;border-radius:999px;padding:2px 10px;font-size:.8rem;font-weight:600}
+.replies{margin:10px 0 0 10px;padding-left:10px;border-left:3px solid #f0d2d4}
+.replies .bubble{margin-bottom:8px}
+.ro{color:var(--mut);font-size:.85rem}
+
+/* login */
+.login{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:24px 18px;max-width:420px;margin:0 auto}
+.login .brand{text-align:center;margin-bottom:18px}
+.login .brand img{width:104px;height:104px}
+.login h1{font-size:1.8rem;color:var(--red-d);margin-top:8px}
+.login .sch{font-weight:700;font-size:1.1rem;margin-top:2px}
+.login .sub{color:var(--mut);font-size:.9rem}
+.pinrow{position:relative}
+.pinrow button{position:absolute;right:2px;top:2px;height:44px;border:0;background:transparent;font-weight:700;color:var(--red);padding:0 12px;cursor:pointer}
+.foot{text-align:center;color:var(--mut);font-size:.78rem;margin-top:18px}
+
+/* overlay & toast */
+#loader{position:fixed;inset:0;z-index:50;background:rgba(255,250,248,.78);display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;font-weight:700}
+#loader.show{display:flex}
+.spin{width:46px;height:46px;border:5px solid #f3d5d6;border-top-color:var(--red);border-radius:50%;animation:sp 0.8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+#toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);z-index:70;max-width:90vw;background:#2b2523;color:#fff;padding:12px 16px;border-radius:12px;font-weight:600;display:none;text-align:center}
+#toast.show{display:block}
+#toast.err{background:var(--red-d)}
+#modal{position:fixed;inset:0;z-index:55;background:rgba(0,0,0,.45);display:none;align-items:flex-end;justify-content:center}
+#modal.show{display:flex}
+.sheet{background:#fff;width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));max-height:90vh;overflow:auto}
+@media(min-width:560px){#modal{align-items:center}.sheet{border-radius:20px}}
+.big{font-size:3rem;font-weight:800;color:var(--green);text-align:center;line-height:1.1}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="bar" id="bar"></div>
+<div id="app"><noscript><p style="padding:20px">Aplikasi ini membutuhkan JavaScript.</p></noscript></div>
+<div id="loader" role="alert" aria-live="assertive"><div class="spin"></div><div>Mohon tunggu…</div></div>
+<div id="modal" role="dialog" aria-modal="true"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+'use strict';
+
+/* ================================================================
+   KONFIGURASI — tempel URL Web App Google Apps Script (berakhiran /exec)
+   ================================================================ */
+var API_URL = 'https://script.google.com/macros/s/AKfycbwcZ9-WM-zmeXwWwvJfFHnHjGSIDCpm9t0Wuv46dKd7S7pRn1TDOZEJoytUbyqylFv7/exec';
+
+/* ================================================================
+   UTILITAS
+   ================================================================ */
+var $ = function (s, r) { return (r || document).querySelector(s); };
+var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+var BLN = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+function fmt(iso) {
+  var m = /^(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d)/.exec(iso || '');
+  return m ? (+m[3]) + ' ' + BLN[+m[2] - 1] + ' ' + m[1] + ', ' + m[4] + '.' + m[5] : '';
+}
+function roleLabel(r) { return r === 'admin' ? 'Kepala Sekolah' : r === 'guru' ? 'Guru' : 'Orang Tua'; }
+function tingkatClass(t) { return t === 'Sangat Lancar' ? 'g' : t === 'Mulai Lancar' ? 'y' : 'o'; }
+function empty(msg) { return '<div class="empty">' + esc(msg) + '</div>'; }
+function pct(a, b) { return b ? Math.round(a / b * 100) : 0; }
+
+var toastTimer = null;
+function toast(msg, isErr) {
+  var t = $('#toast');
+  t.textContent = msg;
+  t.className = 'show' + (isErr ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { t.className = ''; }, isErr ? 5000 : 3000);
+}
+
+/* ================================================================
+   STATE & PENYIMPANAN SESI
+   ================================================================ */
+var S = { token: null, user: null, tab: null, kelas: '*', kelasList: [], rt: 0, ui: {}, last: null, users: [], dk: null };
+var installEvt = null;
+
+function saveSession(remember) {
+  var v = JSON.stringify({ t: S.token, u: S.user });
+  try {
+    (remember ? localStorage : sessionStorage).setItem('bb:s', v);
+    (remember ? sessionStorage : localStorage).removeItem('bb:s');
+  } catch (e) {}
+}
+function loadSession() {
+  try {
+    var v = sessionStorage.getItem('bb:s') || localStorage.getItem('bb:s');
+    if (v) { var o = JSON.parse(v); if (o && o.t && o.u) { S.token = o.t; S.user = o.u; return true; } }
+  } catch (e) {}
+  return false;
+}
+function clearStorage() {
+  try {
+    sessionStorage.removeItem('bb:s');
+    var del = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf('bb:') === 0) del.push(k);
+    }
+    del.forEach(function (k) { localStorage.removeItem(k); });
+  } catch (e) {}
+}
+function lsGet(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+function curKelas() { return S.user.role === 'admin' ? S.kelas : S.user.kelas; }
+
+/* ================================================================
+   KOMUNIKASI DENGAN SERVER (Apps Script Web App)
+   ================================================================ */
+var busy = 0;
+var barCount = 0;
+function setBusy(on) {
+  busy += on ? 1 : -1;
+  if (busy < 0) busy = 0;
+  $('#loader').className = busy > 0 ? 'show' : '';
+}
+function setBar(on) {
+  barCount += on ? 1 : -1;
+  if (barCount < 0) barCount = 0;
+  var b = $('#bar');
+  if (barCount > 0) { b.className = 'bar on'; }
+  else { b.style.width = '100%'; setTimeout(function () { b.className = 'bar'; b.style.width = ''; }, 250); }
+}
+
+function call(action, payload) {
+  if (API_URL.indexOf('GANTI_') === 0) {
+    return Promise.reject(new Error('Alamat server belum diatur. Isi API_URL di index.html.'));
+  }
+  var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 60000);
+  var body = {};
+  for (var k in payload) body[k] = payload[k];
+  body.action = action;
+  body.token = S.token;
+  return fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(body),
+    signal: ctrl ? ctrl.signal : undefined
+  }).then(function (res) { return res.json(); }).then(function (j) {
+    if (!j.ok) { var e = new Error(j.error || 'Terjadi kesalahan.'); e.code = j.code; throw e; }
+    return j.data;
+  }).catch(function (e) {
+    if (e && e.code) throw e;
+    if (e && e.name === 'AbortError') throw new Error('Koneksi terlalu lambat. Coba lagi.');
+    if (e instanceof SyntaxError) throw new Error('Balasan server tidak valid. Periksa URL Web App.');
+    if (e instanceof TypeError) throw new Error('Tidak ada koneksi internet. Coba lagi.');
+    throw e;
+  }).then(function (d) { clearTimeout(timer); return d; }, function (e) { clearTimeout(timer); throw e; });
+}
+
+function handleErr(e) {
+  if (e && e.code === 'SESSION') { logout(e.message); return; }
+  toast(e && e.message ? e.message : 'Terjadi kesalahan.', true);
+}
+
+/** Aksi yang mengubah data / klik pengguna: overlay penuh mencegah klik ganda. */
+function act(action, payload, okMsg) {
+  if (busy > 0) return Promise.resolve(null);
+  setBusy(true);
+  return call(action, payload || {}).then(function (d) {
+    setBusy(false);
+    if (okMsg) toast(okMsg);
+    return d;
+  }, function (e) { setBusy(false); handleErr(e); return null; });
+}
+
+/** Baca data dengan cache lokal: tampil cepat dari cache, lalu diperbarui dari server. */
+function fetchCached(action, payload, cb) {
+  var key = 'bb:c:' + S.user.id + ':' + action + ':' + JSON.stringify(payload || {});
+  var cached = lsGet(key);
+  if (cached) cb(cached.d, true);
+  setBar(true);
+  return call(action, payload || {}).then(function (d) {
+    setBar(false);
+    lsSet(key, { d: d });
+    if (!cached || JSON.stringify(cached.d) !== JSON.stringify(d)) cb(d, false);
+    return d;
+  }, function (e) {
+    setBar(false);
+    if (e && e.code === 'SESSION') { handleErr(e); return null; }
+    if (cached) { toast('Offline: menampilkan data tersimpan.', true); return null; }
+    throw e;
+  });
+}
+
+function isTyping() {
+  var a = document.activeElement;
+  return !!(a && $('#main') && $('#main').contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName));
+}
+
+function loadView(action, payload, render) {
+  var t = ++S.rt;
+  var main = $('#main');
+  var shown = false;
+  main.innerHTML = '<div class="skel">Memuat…</div>';
+  fetchCached(action, payload, function (d, fromCache) {
+    if (t !== S.rt) return;
+    if (shown && !fromCache && isTyping()) return;
+    S.last = { render: render, d: d };
+    render(d);
+    shown = true;
+  }).catch(function (e) {
+    if (t !== S.rt) return;
+    main.innerHTML = '<div class="card err"><p>⚠️ ' + esc(e.message) + '</p><button class="btn" data-act="retry">Coba lagi</button></div>';
+  });
+}
+function rerender() { if (S.last) S.last.render(S.last.d); }
+
+/* ================================================================
+   LOGIN / LOGOUT
+   ================================================================ */
+function renderLogin() {
+  S.token = null; S.user = null;
+  $('#app').innerHTML =
+    '<div class="login">' +
+    '<div class="brand"><img src="logo.png" alt="Logo SD Negeri Geger" width="104" height="104">' +
+    '<h1>Baca Bersama</h1><div class="sch">SD Negeri Geger</div><div class="sub">Kedungadem - Bojonegoro</div></div>' +
+    '<form id="loginForm" class="card" autocomplete="on">' +
+    '<label for="lu">Username</label><input id="lu" name="username" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required>' +
+    '<label for="lp">PIN</label><div class="pinrow"><input id="lp" name="pin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="20" required>' +
+    '<button type="button" data-act="togglePin" aria-label="Tampilkan PIN">Lihat</button></div>' +
+    '<label class="chk" style="margin-top:10px"><input type="checkbox" id="lr" checked> Ingat saya di HP ini</label>' +
+    '<button class="btn primary block" type="submit" style="margin-top:14px">Masuk</button>' +
+    '<p class="muted" style="text-align:center;margin-top:12px">Lupa PIN? Hubungi kepala sekolah.</p></form>' +
+    '<div class="foot">Belajar membaca bersama guru dan orang tua</div></div>';
+}
+
+function doLogin() {
+  var u = $('#lu').value.trim(), p = $('#lp').value.trim();
+  if (!u || !p) { toast('Isi username dan PIN.', true); return; }
+  var remember = $('#lr').checked;
+  act('login', { username: u, pin: p }).then(function (d) {
+    if (!d) return;
+    S.token = d.token; S.user = d.user;
+    saveSession(remember);
+    startApp();
+  });
+}
+
+function logout(msg) {
+  clearStorage();
+  S.token = null; S.user = null; S.tab = null; S.ui = {}; S.last = null; S.kelasList = []; S.kelas = '*'; S.rt++;
+  closeModal();
+  renderLogin();
+  if (typeof msg === 'string' && msg) toast(msg, true);
+}
+
+/* ================================================================
+   KERANGKA APLIKASI
+   ================================================================ */
+var TABS = {
+  ortu: [['baca', '📖', 'Membaca'], ['soal', '📝', 'Soal'], ['diskusi', '💬', 'Diskusi']],
+  guru: [['baca', '📖', 'Membaca'], ['soal', '📝', 'Soal'], ['diskusi', '💬', 'Diskusi']],
+  admin: [['baca', '📖', 'Membaca'], ['soal', '📝', 'Soal'], ['diskusi', '💬', 'Diskusi'], ['user', '👥', 'Pengguna']]
+};
+
+function renderShell() {
+  var u = S.user, tabs = TABS[u.role];
+  $('#app').innerHTML =
+    '<header class="top"><img src="logo.png" width="38" height="38" alt="">' +
+    '<div class="ttl"><b>Baca Bersama</b><small>' + esc(u.nama) + ' · ' + roleLabel(u.role) + (u.role !== 'admin' ? ' · Kelas ' + esc(u.kelas) : '') + '</small></div>' +
+    '<button class="ibtn" data-act="menu" aria-label="Menu akun">☰</button></header>' +
+    '<div id="banner" class="banner" hidden></div>' +
+    '<main id="main" tabindex="-1"></main>' +
+    '<nav class="tabs" style="--n:' + tabs.length + '">' +
+    tabs.map(function (t) {
+      return '<button data-act="tab" data-tab="' + t[0] + '"><span>' + t[1] + '</span>' + t[2] + '</button>';
+    }).join('') + '</nav>';
+}
+
+function startApp() {
+  renderShell();
+  S.ui = {};
+  if (S.user.role === 'admin') {
+    S.kelas = '*';
+    loadKelas();
+  } else {
+    S.kelas = S.user.kelas;
+  }
+  go('baca');
+  if (S.user.role === 'ortu') refreshNotif();
+}
+
+function loadKelas() {
+  return fetchCached('kelasList', {}, function (d) {
+    S.kelasList = d.kelas || [];
+    if (S.last && !isTyping()) rerender();
+  }).catch(function () {});
+}
+
+function refreshNotif() {
+  if (S.user.role !== 'ortu') return;
+  fetchCached('notif', {}, function (d) {
+    var b = $('#banner');
+    if (!b) return;
+    if (d.count > 0) {
+      b.hidden = false;
+      b.innerHTML = '<span aria-hidden="true">🔔</span><b>Guru menyebut Anda dalam diskusi kelas' + (d.count > 1 ? ' (' + d.count + ')' : '') + '</b>' +
+        '<button class="btn sm primary" data-act="tab" data-tab="diskusi">Lihat</button>';
+    } else { b.hidden = true; b.innerHTML = ''; }
+  }).catch(function () {});
+}
+
+function go(tab, keepScroll) {
+  S.tab = tab;
+  $$('.tabs button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-tab') === tab); });
+  if (!keepScroll) window.scrollTo(0, 0);
+  var ortu = S.user.role === 'ortu';
+  if (tab === 'baca') ortu ? loadBacaOrtu() : loadBacaStaff();
+  else if (tab === 'soal') ortu ? loadSoalOrtu() : loadSoalStaff();
+  else if (tab === 'diskusi') loadDiskusi();
+  else if (tab === 'user') loadUsers();
+}
+
+function scopebar(allowAll) {
+  if (S.user.role !== 'admin') return '';
+  if (!allowAll && S.kelas === '*') S.kelas = S.kelasList[0] || '*';
+  var opts = (allowAll ? '<option value="*"' + (S.kelas === '*' ? ' selected' : '') + '>Semua kelas</option>' : '') +
+    S.kelasList.map(function (k) { return '<option value="' + esc(k) + '"' + (S.kelas === k ? ' selected' : '') + '>Kelas ' + esc(k) + '</option>'; }).join('');
+  return '<div class="scope"><label for="scopeSel">Lihat</label><select id="scopeSel">' + opts + '</select></div>';
+}
+
+function kelasField(id) {
+  if (S.user.role !== 'admin') return '';
+  if (!S.kelasList.length) return '<div class="note">Belum ada kelas. Tambahkan guru atau orang tua di menu Pengguna terlebih dahulu.</div>';
+  return '<label for="' + id + '">Untuk kelas</label><select id="' + id + '">' +
+    S.kelasList.map(function (k) { return '<option value="' + esc(k) + '"' + (S.kelas === k ? ' selected' : '') + '>Kelas ' + esc(k) + '</option>'; }).join('') + '</select>';
+}
+function formKelas(id) { return S.user.role === 'admin' ? ($('#' + id) ? $('#' + id).value : '') : S.user.kelas; }
+
+/* ================================================================
+   MODAL
+   ================================================================ */
+function showModal(html) { var m = $('#modal'); m.innerHTML = '<div class="sheet">' + html + '</div>'; m.className = 'show'; }
+function closeModal() { var m = $('#modal'); m.className = ''; m.innerHTML = ''; }
+
+function menuModal() {
+  var u = S.user;
+  var iosHint = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
+  showModal(
+    '<h2>' + esc(u.nama) + '</h2><p class="muted">' + roleLabel(u.role) + (u.role !== 'admin' ? ' · Kelas ' + esc(u.kelas) : '') + (u.namaAnak ? ' · Anak: ' + esc(u.namaAnak) : '') + '<br>Username: ' + esc(u.username) + '</p>' +
+    '<div class="actions" style="flex-direction:column">' +
+    '<button class="btn block" data-act="pinForm">🔑 Ganti PIN</button>' +
+    (installEvt ? '<button class="btn block" data-act="install">📲 Pasang aplikasi di HP</button>' : '') +
+    (iosHint && !installEvt ? '<p class="muted">Untuk memasang di iPhone: tekan tombol Bagikan, lalu "Tambah ke Layar Utama".</p>' : '') +
+    '<button class="btn danger block" data-act="logout">Keluar</button>' +
+    '<button class="btn block" data-act="closeModal">Tutup</button></div>');
+}
+function pinModal() {
+  showModal('<h2>Ganti PIN</h2><label for="pin0">PIN lama</label><input id="pin0" type="password" inputmode="numeric" maxlength="20" autocomplete="current-password">' +
+    '<label for="pin1">PIN baru (4-8 angka)</label><input id="pin1" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password">' +
+    '<div class="actions"><button class="btn primary" data-act="savePin">Simpan</button><button class="btn" data-act="closeModal">Batal</button></div>');
+}
+
+/* ================================================================
+   LAMPIRAN (kompres gambar agar ringan di jaringan lambat)
+   ================================================================ */
+function readB64(blob) {
+  return new Promise(function (res, rej) {
+    var r = new FileReader();
+    r.onload = function () { res(String(r.result).split(',')[1] || ''); };
+    r.onerror = function () { rej(new Error('Gagal membaca file.')); };
+    r.readAsDataURL(blob);
+  });
+}
+function shrink(f) {
+  return new Promise(function (res, rej) {
+    var url = URL.createObjectURL(f), img = new Image();
+    img.onload = function () {
+      URL.revokeObjectURL(url);
+      var max = 1280, w = img.width, h = img.height, sc = Math.min(1, max / Math.max(w, h));
+      w = Math.round(w * sc); h = Math.round(h * sc);
+      var c = document.createElement('canvas'); c.width = w; c.height = h;
+      var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, w, h); x.drawImage(img, 0, 0, w, h);
+      c.toBlob(function (b) { b ? res(b) : rej(new Error('Gagal memproses gambar.')); }, 'image/jpeg', 0.72);
+    };
+    img.onerror = function () { URL.revokeObjectURL(url); rej(new Error('Gambar tidak dapat dibaca.')); };
+    img.src = url;
+  });
+}
+function prepFile(f) {
+  if (!f) return Promise.resolve(null);
+  if (f.type === 'application/pdf') {
+    if (f.size > 3.5 * 1024 * 1024) return Promise.reject(new Error('PDF terlalu besar (maksimal 3,5 MB).'));
+    return readB64(f).then(function (d) { return { name: f.name, mime: f.type, data: d }; });
+  }
+  if (f.type === 'image/jpeg' || f.type === 'image/png') {
+    return shrink(f).then(function (b) { return readB64(b).then(function (d) { return { name: f.name, mime: 'image/jpeg', data: d }; }); });
+  }
+  return Promise.reject(new Error('Lampiran harus PDF, JPG, atau PNG.'));
+}
+
+/* ================================================================
+   MENU 1 — MEMBACA (guru / admin)
+   ================================================================ */
+function loadBacaStaff() {
+  if (S.user.role === 'admin' && S.kelas === undefined) S.kelas = '*';
+  loadView('getMateri', { kelas: curKelas() }, viewBacaStaff);
+}
+
+function viewBacaStaff(d) {
+  var open = !!S.ui.formBaca;
+  var h = scopebar(true) +
+    '<button class="btn primary block" data-act="toggle" data-k="formBaca">' + (open ? 'Tutup form' : '+ Tugas Membaca Baru') + '</button>';
+  if (open) {
+    h += '<div class="card" style="margin-top:12px"><h2>Tugas Membaca Baru</h2>' + kelasField('fb-kelas') +
+      '<label for="fb-judul">Judul</label><input id="fb-judul" maxlength="150">' +
+      '<label for="fb-instr">Instruksi untuk orang tua</label><textarea id="fb-instr" maxlength="1000" placeholder="Contoh: Dampingi anak membaca 2 kali."></textarea>' +
+      '<label for="fb-teks">Teks bacaan</label><textarea id="fb-teks" rows="6" maxlength="8000"></textarea>' +
+      '<label for="fb-file">Lampiran (opsional: PDF, JPG, PNG)</label><input id="fb-file" type="file" accept="application/pdf,image/jpeg,image/png">' +
+      '<p class="muted">Foto otomatis dikecilkan agar ringan. PDF maksimal 3,5 MB.</p>' +
+      '<div class="actions"><button class="btn primary" data-act="saveBaca">Simpan Tugas</button></div></div>';
+  }
+  h += '<h2 style="margin-top:18px">Riwayat Tugas Membaca</h2>';
+  h += d.materi.length ? d.materi.map(function (m) {
+    return '<article class="card"><div class="row"><h3>' + esc(m.judul) + '</h3>' + (S.user.role === 'admin' ? '<span class="badge">Kelas ' + esc(m.kelas) + '</span>' : '') + '</div>' +
+      '<div class="muted">' + fmt(m.tanggal) + '</div>' +
+      (m.instruksi ? '<div class="note pre">' + esc(m.instruksi) + '</div>' : '') +
+      (m.teks ? '<p class="pre" style="max-height:7.5em;overflow:hidden">' + esc(m.teks) + '</p>' : '') +
+      (m.fileUrl ? '<p><a href="' + esc(m.fileUrl) + '" target="_blank" rel="noopener">📎 Buka lampiran</a></p>' : '') +
+      '<div class="prog"><i style="width:' + pct(m.jumlahLapor, m.jumlahOrtu) + '%"></i></div><small>' + m.jumlahLapor + ' dari ' + m.jumlahOrtu + ' orang tua sudah melapor</small>' +
+      '<div class="actions"><button class="btn sm" data-act="rekap" data-id="' + esc(m.id) + '">📋 Lihat Laporan</button>' +
+      '<button class="btn sm danger" data-act="delMateri" data-id="' + esc(m.id) + '">Hapus</button></div>' +
+      '<div id="rekap-' + esc(m.id) + '"></div></article>';
+  }).join('') : empty('Belum ada tugas membaca.');
+  $('#main').innerHTML = h;
+}
+
+function renderRekap(d) {
+  var n = { 'Masih Mengeja': 0, 'Mulai Lancar': 0, 'Sangat Lancar': 0, belum: 0 };
+  d.daftar.forEach(function (x) { if (x.tingkat) n[x.tingkat]++; else n.belum++; });
+  var h = '<hr style="border:0;border-top:1px solid var(--line);margin:12px 0"><div class="chips" style="margin:0 0 8px">' +
+    '<span class="badge o">Masih Mengeja: ' + n['Masih Mengeja'] + '</span><span class="badge y">Mulai Lancar: ' + n['Mulai Lancar'] + '</span>' +
+    '<span class="badge g">Sangat Lancar: ' + n['Sangat Lancar'] + '</span><span class="badge n">Belum lapor: ' + n.belum + '</span></div>';
+  h += d.daftar.length ? d.daftar.map(function (x) {
+    return '<div style="padding:8px 0;border-bottom:1px solid var(--line)"><div class="row"><b>' + esc(x.namaAnak) + '</b>' +
+      (x.tingkat ? '<span class="badge ' + tingkatClass(x.tingkat) + '">' + esc(x.tingkat) + '</span>' : '<span class="badge n">Belum melapor</span>') + '</div>' +
+      '<small>Orang tua: ' + esc(x.namaOrtu) + (x.tanggal ? ' · ' + fmt(x.tanggal) : '') + '</small>' +
+      (x.catatan ? '<p class="pre" style="margin:4px 0 0">' + esc(x.catatan) + '</p>' : '') + '</div>';
+  }).join('') : empty('Belum ada orang tua terdaftar di kelas ini.');
+  return h;
+}
+
+/* ================================================================
+   MENU 1 — MEMBACA (orang tua)
+   ================================================================ */
+function loadBacaOrtu() { loadView('getMateri', { kelas: S.user.kelas }, viewBacaOrtu); }
+
+function viewBacaOrtu(d) {
+  var h = '<h2>Tugas Membaca</h2>';
+  h += d.materi.length ? d.materi.map(function (m) {
+    var l = m.laporanSaya;
+    var form = l ?
+      '<div class="done">✅ Sudah Dilaporkan</div><p style="margin:8px 0 0"><span class="badge ' + tingkatClass(l.tingkat) + '">' + esc(l.tingkat) + '</span> <small>' + fmt(l.tanggal) + '</small></p>' +
+      (l.catatan ? '<p class="pre">' + esc(l.catatan) + '</p>' : '') :
+      '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)"><h3>Laporan Perkembangan Membaca Anak</h3>' +
+      '<label>Tingkat kelancaran</label><div class="pills">' +
+      ['Masih Mengeja', 'Mulai Lancar', 'Sangat Lancar'].map(function (t) {
+        return '<label class="pill"><input type="radio" name="tk-' + esc(m.id) + '" value="' + t + '"><span>' + t + '</span></label>';
+      }).join('') + '</div>' +
+      '<label for="ct-' + esc(m.id) + '">Catatan perkembangan / kesulitan anak</label>' +
+      '<textarea id="ct-' + esc(m.id) + '" maxlength="1500" placeholder="Contoh: Masih sulit membedakan b dan d."></textarea>' +
+      '<button class="btn primary block" style="margin-top:12px" data-act="kirimLapor" data-id="' + esc(m.id) + '">Kirim Laporan</button></div>';
+    return '<article class="card"><h3>' + esc(m.judul) + '</h3><div class="muted">' + fmt(m.tanggal) + '</div>' +
+      (m.instruksi ? '<div class="note pre"><b>Petunjuk:</b> ' + esc(m.instruksi) + '</div>' : '') +
+      (m.teks ? '<div class="reading pre">' + esc(m.teks) + '</div>' : '') +
+      (m.fileUrl ? '<a class="btn block" href="' + esc(m.fileUrl) + '" target="_blank" rel="noopener">📎 Buka file bacaan</a>' : '') +
+      form + '</article>';
+  }).join('') : empty('Belum ada tugas membaca dari guru.');
+  $('#main').innerHTML = h;
+}
+
+/* ================================================================
+   MENU 2 — SOAL (guru / admin)
+   ================================================================ */
+function loadSoalStaff() { loadView('getTugas', { kelas: curKelas() }, viewSoalStaff); }
+
+function formSoal() {
+  var i, pg = '', es = '';
+  for (i = 0; i < 10; i++) {
+    pg += '<details class="slot"><summary>Soal PG ' + (i + 1) + ' <em class="fill" id="pgf-' + i + '"></em></summary>' +
+      '<label for="pq-' + i + '">Pertanyaan</label><textarea id="pq-' + i + '" rows="2" maxlength="500"></textarea>' +
+      ['a', 'b', 'c', 'd'].map(function (o) { return '<label for="p' + o + '-' + i + '">Opsi ' + o.toUpperCase() + '</label><input id="p' + o + '-' + i + '" maxlength="200">'; }).join('') +
+      '<label for="pk-' + i + '">Kunci jawaban</label><select id="pk-' + i + '"><option value="">- pilih -</option><option>A</option><option>B</option><option>C</option><option>D</option></select></details>';
+  }
+  for (i = 0; i < 5; i++) {
+    es += '<details class="slot"><summary>Soal Esai ' + (i + 1) + ' <em class="fill" id="esf-' + i + '"></em></summary>' +
+      '<label for="eq-' + i + '">Pertanyaan</label><textarea id="eq-' + i + '" rows="2" maxlength="500"></textarea></details>';
+  }
+  return '<div class="card" style="margin-top:12px"><h2>Tugas Soal Baru</h2>' + kelasField('fs-kelas') +
+    '<label for="fs-judul">Judul tugas</label><input id="fs-judul" maxlength="150">' +
+    '<p class="muted">Isi hanya slot yang diperlukan. Slot yang kosong tidak akan ditampilkan ke orang tua.</p>' +
+    '<h3 style="margin-top:14px">Pilihan Ganda (maks. 10)</h3>' + pg +
+    '<h3 style="margin-top:14px">Esai (maks. 5)</h3>' + es +
+    '<div class="actions"><button class="btn primary" data-act="saveSoal">Simpan Tugas Soal</button></div></div>';
+}
+
+function viewSoalStaff(d) {
+  var open = !!S.ui.formSoal;
+  var h = scopebar(true) +
+    '<button class="btn primary block" data-act="toggle" data-k="formSoal">' + (open ? 'Tutup form' : '+ Tugas Soal Baru') + '</button>';
+  if (open) h += formSoal();
+  h += '<h2 style="margin-top:18px">Daftar Tugas Soal</h2>';
+  h += d.tugas.length ? d.tugas.map(function (t) {
+    return '<article class="card"><div class="row"><h3>' + esc(t.judul) + '</h3>' + (S.user.role === 'admin' ? '<span class="badge">Kelas ' + esc(t.kelas) + '</span>' : '') + '</div>' +
+      '<div class="muted">' + fmt(t.tanggal) + ' · ' + t.jumlahPG + ' PG · ' + t.jumlahEsai + ' Esai</div>' +
+      '<div class="prog"><i style="width:' + pct(t.jumlahKumpul, t.jumlahOrtu) + '%"></i></div><small>' + t.jumlahKumpul + ' dari ' + t.jumlahOrtu + ' sudah mengumpulkan</small>' +
+      '<div class="actions"><button class="btn sm" data-act="hasil" data-id="' + esc(t.id) + '">📊 Hasil Pengerjaan</button>' +
+      '<button class="btn sm danger" data-act="delTugas" data-id="' + esc(t.id) + '">Hapus</button></div>' +
+      '<div id="hasil-' + esc(t.id) + '"></div></article>';
+  }).join('') : empty('Belum ada tugas soal.');
+  $('#main').innerHTML = h;
+}
+
+function renderHasil(d) {
+  var sudah = d.daftar.filter(function (x) { return x.terkirim; });
+  var belum = d.daftar.filter(function (x) { return !x.terkirim; });
+  var h = '<hr style="border:0;border-top:1px solid var(--line);margin:12px 0">';
+  h += sudah.length ? sudah.map(function (x) {
+    var es = x.esai.length ? x.esai.map(function (e, i) {
+      return '<div style="margin-top:8px"><small>Esai ' + (i + 1) + ': ' + esc(e.q) + '</small><p class="pre" style="margin:2px 0;background:var(--bg);border-radius:10px;padding:8px">' + esc(e.a) + '</p></div>';
+    }).join('') : '';
+    return '<details class="slot"><summary><span style="flex:1">' + esc(x.namaAnak) + '</span>' +
+      (d.jumlahPG ? '<span class="badge g">PG ' + esc(x.skor) + ' (' + x.benar + '/' + x.total + ')</span>' : '<span class="badge n">Esai saja</span>') + '</summary>' +
+      '<small>Orang tua: ' + esc(x.namaOrtu) + ' · dikirim ' + fmt(x.tanggal) + '</small>' + es + '</details>';
+  }).join('') : '<p class="muted">Belum ada yang mengumpulkan.</p>';
+  if (belum.length) h += '<p style="margin-top:10px"><b>Belum mengumpulkan:</b> ' + belum.map(function (x) { return esc(x.namaAnak); }).join(', ') + '</p>';
+  return h;
+}
+
+/* ================================================================
+   MENU 2 — SOAL (orang tua)
+   ================================================================ */
+function loadSoalOrtu() { loadView('getTugas', { kelas: S.user.kelas }, viewSoalOrtu); }
+
+function viewSoalOrtu(d) {
+  var h = '<h2>Tugas Soal</h2>';
+  h += d.tugas.length ? d.tugas.map(function (t) {
+    var body;
+    if (t.hasilSaya) {
+      var hs = t.hasilSaya;
+      body = '<div class="done">✅ Terkirim · ' + fmt(hs.tanggal) + '</div>' +
+        (hs.total ? '<div class="big" style="margin-top:10px">' + esc(hs.skor) + '</div><p style="text-align:center;margin:0">Skor PG · ' + hs.benar + ' dari ' + hs.total + ' benar</p>' : '<p class="muted">Jawaban esai Anda sudah diterima guru.</p>');
+    } else if (S.ui.openSoal === t.id) {
+      body = '<div>' + t.pg.map(function (p, i) {
+        return '<fieldset class="q" id="qq-' + esc(t.id) + '-' + i + '"><legend>' + (i + 1) + '. ' + esc(p.q) + '</legend><div class="opts">' +
+          ['a', 'b', 'c', 'd'].map(function (o) {
+            return '<label class="opt"><input type="radio" name="pg-' + esc(t.id) + '-' + i + '" value="' + o.toUpperCase() + '"><span><b>' + o.toUpperCase() + '.</b> ' + esc(p[o]) + '</span></label>';
+          }).join('') + '</div></fieldset>';
+      }).join('') +
+        t.esai.map(function (e, j) {
+          return '<div class="q" id="qe-' + esc(t.id) + '-' + j + '"><label for="es-' + esc(t.id) + '-' + j + '">Esai ' + (j + 1) + '. ' + esc(e.q) + '</label><textarea id="es-' + esc(t.id) + '-' + j + '" maxlength="2000"></textarea></div>';
+        }).join('') +
+        '<div class="actions"><button class="btn primary" data-act="kirimSoal" data-id="' + esc(t.id) + '">Kirim Jawaban</button>' +
+        '<button class="btn" data-act="closeSoal">Batal</button></div></div>';
+    } else {
+      body = '<button class="btn primary block" style="margin-top:10px" data-act="openSoal" data-id="' + esc(t.id) + '">Kerjakan</button>';
+    }
+    return '<article class="card"><h3>' + esc(t.judul) + '</h3><div class="muted">' + fmt(t.tanggal) + ' · ' + t.pg.length + ' PG · ' + t.esai.length + ' Esai</div>' + body + '</article>';
+  }).join('') : empty('Belum ada tugas soal dari guru.');
+  $('#main').innerHTML = h;
+}
+
+/* ================================================================
+   MENU 3 — DISKUSI KELAS
+   ================================================================ */
+function loadDiskusi() {
+  if (S.user.role === 'admin') {
+    if (S.kelas === '*') S.kelas = S.kelasList[0] || '*';
+    if (S.kelas === '*') {
+      $('#main').innerHTML = scopebar(false) + empty('Belum ada kelas. Tambahkan guru atau orang tua di menu Pengguna.');
+      return;
+    }
+  }
+  loadView('getDiskusi', { kelas: curKelas() }, viewDiskusi);
+  if (S.user.role === 'ortu') refreshNotif();
+}
+
+function viewDiskusi(d) {
+  S.dk = d;
+  var u = S.user, staff = u.role !== 'ortu';
+  var h = scopebar(false);
+  if (staff) {
+    h += '<div class="card"><h3>Tulis pesan untuk kelas ' + esc(d.kelas) + '</h3>' +
+      '<textarea id="dk-isi" maxlength="1500" placeholder="Catatan perkembangan umum atau khusus…"></textarea>' +
+      '<details class="mention"><summary>Sebut orang tua (<span id="mcount">0</span>)</summary>' +
+      (d.ortuList.length ? '<label class="chk"><input type="checkbox" id="m-all"> Pilih semua</label>' +
+        d.ortuList.map(function (o) { return '<label class="chk"><input type="checkbox" class="mchk" value="' + esc(o.id) + '"> ' + esc(o.nama) + ' <small>(ortu ' + esc(o.namaAnak) + ')</small></label>'; }).join('') :
+        '<p class="muted">Belum ada orang tua di kelas ini.</p>') + '</details>' +
+      '<button class="btn primary block" data-act="kirimTopik">Kirim</button></div>';
+  } else {
+    h += '<p class="muted">Anda dapat membaca semua diskusi kelas. Tombol Balas hanya muncul pada pesan yang menyebut Anda.</p>';
+  }
+
+  h += d.topik.length ? d.topik.map(function (t) {
+    var mine = u.role === 'ortu' && t.mentions.indexOf(u.id) >= 0;
+    var chips = t.mentions.length ? '<div class="chips">' + t.mentions.map(function (id) {
+      return '<span class="chip">@' + esc(id === u.id ? 'Anda' : (d.ortuMap[id] || 'Orang tua')) + '</span>';
+    }).join('') + '</div>' : '';
+    var replies = t.balasan.length ? '<div class="replies">' + t.balasan.map(function (r) {
+      return '<div class="bubble ' + (r.role === 'ortu' ? 'parent' : 'staff') + '"><div class="bh"><b>' + esc(r.nama) + '</b><span class="badge ' + (r.role === 'ortu' ? 'g' : '') + '">' + roleLabel(r.role) + '</span><time>' + fmt(r.waktu) + '</time></div>' +
+        '<div class="pre">' + esc(r.isi) + '</div>' +
+        (staff ? '<div class="actions" style="margin-top:6px"><button class="btn sm danger" data-act="delDiskusi" data-id="' + esc(r.id) + '">Hapus</button></div>' : '') + '</div>';
+    }).join('') + '</div>' : '';
+    var reply = '';
+    if (S.ui.replyTo === t.id && t.bisaBalas) {
+      reply = '<div style="margin-top:10px"><textarea id="rp-' + esc(t.id) + '" maxlength="1500" placeholder="Tulis balasan…"></textarea>' +
+        '<div class="actions"><button class="btn primary sm" data-act="kirimBalas" data-id="' + esc(t.id) + '">Kirim Balasan</button><button class="btn sm" data-act="openReply" data-id="">Batal</button></div></div>';
+    }
+    var acts = '<div class="actions" style="margin-top:8px">' +
+      (t.bisaBalas ? '<button class="btn sm" data-act="openReply" data-id="' + esc(t.id) + '">↩ Balas</button>' : '<span class="ro">🔒 Hanya baca</span>') +
+      (staff ? '<button class="btn sm danger" data-act="delDiskusi" data-id="' + esc(t.id) + '">Hapus</button>' : '') + '</div>';
+    return '<div class="bubble ' + (t.role === 'ortu' ? 'parent' : 'staff') + (mine ? ' me' : '') + '"><div class="bh"><b>' + esc(t.nama) + '</b><span class="badge ' + (t.role === 'ortu' ? 'g' : '') + '">' + roleLabel(t.role) + '</span>' +
+      (mine ? '<span class="badge y">Menyebut Anda</span>' : '') + '<time>' + fmt(t.waktu) + '</time></div>' +
+      '<div class="pre">' + esc(t.isi) + '</div>' + chips + acts + reply + replies + '</div>';
+  }).join('') : empty('Belum ada diskusi.');
+  $('#main').innerHTML = h;
+}
+
+/* ================================================================
+   MENU 4 — PENGGUNA (admin / kepala sekolah)
+   ================================================================ */
+function loadUsers() { loadView('listUsers', {}, viewUsers); }
+
+function viewUsers(d) {
+  S.users = d.users;
+  var open = !!S.ui.formUser, dr = S.ui.userDraft || {};
+  var f = S.ui.userFilter || 'semua';
+  var h = '<button class="btn primary block" data-act="toggle" data-k="formUser">' + (open ? 'Tutup form' : '+ Tambah Pengguna') + '</button>';
+  if (open) {
+    h += '<div class="card" style="margin-top:12px"><h2>' + (dr.id ? 'Ubah Pengguna' : 'Pengguna Baru') + '</h2>' +
+      '<label for="fu-role">Peran</label><select id="fu-role"><option value="guru">Guru</option><option value="ortu">Orang Tua</option><option value="admin">Kepala Sekolah (admin)</option></select>' +
+      '<label for="fu-nama">Nama lengkap</label><input id="fu-nama" maxlength="80" value="' + esc(dr.nama || '') + '">' +
+      '<div id="fu-anakw"><label for="fu-anak">Nama anak</label><input id="fu-anak" maxlength="80" value="' + esc(dr.namaAnak || '') + '"></div>' +
+      '<div id="fu-kelasw"><label for="fu-kelas">Kelas (contoh: 1A)</label><input id="fu-kelas" maxlength="20" list="kls" autocapitalize="characters" value="' + esc(dr.kelas && dr.kelas !== 'SEMUA' ? dr.kelas : '') + '"><datalist id="kls">' +
+      S.kelasList.map(function (k) { return '<option value="' + esc(k) + '">'; }).join('') + '</datalist></div>' +
+      '<label for="fu-user">Username</label><input id="fu-user" maxlength="40" autocapitalize="none" spellcheck="false" value="' + esc(dr.username || '') + '">' +
+      '<label for="fu-pin">PIN (4-8 angka)' + (dr.id ? ' - kosongkan jika tidak diubah' : '') + '</label><input id="fu-pin" inputmode="numeric" maxlength="8" autocomplete="off">' +
+      '<div class="actions"><button class="btn primary" data-act="saveUser" data-id="' + esc(dr.id || '') + '">Simpan</button><button class="btn" data-act="cancelUser">Batal</button></div></div>';
+  }
+  h += '<div class="pills" style="grid-template-columns:repeat(4,1fr);margin:14px 0 8px">' +
+    [['semua', 'Semua'], ['admin', 'Admin'], ['guru', 'Guru'], ['ortu', 'Ortu']].map(function (x) {
+      return '<button class="btn sm' + (f === x[0] ? ' primary' : '') + '" data-act="ufilter" data-f="' + x[0] + '" style="padding:6px">' + x[1] + '</button>';
+    }).join('') + '</div>' +
+    '<input id="usearch" type="search" placeholder="Cari nama, anak, atau kelas…" style="margin-bottom:12px">';
+  h += '<div id="ulist">' + d.users.filter(function (x) { return f === 'semua' || x.role === f; }).map(function (x) {
+    return '<article class="card" data-s="' + esc((x.nama + ' ' + x.namaAnak + ' ' + x.kelas + ' ' + x.username).toLowerCase()) + '"><div class="row"><h3>' + esc(x.nama) + '</h3><span class="badge ' + (x.role === 'ortu' ? 'g' : '') + '">' + roleLabel(x.role) + '</span></div>' +
+      '<small>@' + esc(x.username) + (x.role !== 'admin' ? ' · Kelas ' + esc(x.kelas) : '') + (x.namaAnak ? ' · Anak: ' + esc(x.namaAnak) : '') + '</small>' +
+      '<div class="actions"><button class="btn sm" data-act="editUser" data-id="' + esc(x.id) + '">Ubah / Reset PIN</button>' +
+      (x.id !== S.user.id ? '<button class="btn sm danger" data-act="delUser" data-id="' + esc(x.id) + '">Hapus</button>' : '') + '</div></article>';
+  }).join('') + '</div>';
+  h += '<p class="muted">PIN disimpan terenkripsi dan tidak bisa dilihat. Untuk pengguna yang lupa PIN, gunakan "Ubah / Reset PIN".</p>';
+  $('#main').innerHTML = h;
+  if (open) { $('#fu-role').value = dr.role || 'guru'; syncUserForm(); }
+}
+
+function syncUserForm() {
+  var r = $('#fu-role'); if (!r) return;
+  $('#fu-anakw').style.display = r.value === 'ortu' ? '' : 'none';
+  $('#fu-kelasw').style.display = r.value === 'admin' ? 'none' : '';
+}
+
+/* ================================================================
+   AKSI (klik)
+   ================================================================ */
+var A = {};
+
+A.togglePin = function (b) {
+  var i = $('#lp'); var show = i.type === 'password';
+  i.type = show ? 'text' : 'password'; b.textContent = show ? 'Sembunyi' : 'Lihat';
+};
+A.tab = function (b) { closeModal(); go(b.getAttribute('data-tab')); };
+A.retry = function () { go(S.tab, true); };
+A.menu = menuModal;
+A.closeModal = closeModal;
+A.pinForm = pinModal;
+A.logout = function () { logout(); };
+A.install = function () {
+  if (!installEvt) return;
+  installEvt.prompt();
+  installEvt.userChoice.then(function () { installEvt = null; closeModal(); });
+};
+A.toggle = function (b) { var k = b.getAttribute('data-k'); S.ui[k] = !S.ui[k]; if (k === 'formUser') S.ui.userDraft = null; rerender(); };
+
+A.savePin = function () {
+  var o = $('#pin0').value.trim(), n = $('#pin1').value.trim();
+  if (!o) { toast('Isi PIN lama.', true); return; }
+  if (!/^\d{4,8}$/.test(n)) { toast('PIN baru harus 4 sampai 8 angka.', true); return; }
+  act('changePin', { oldPin: o, newPin: n }, 'PIN berhasil diganti.').then(function (d) { if (d) closeModal(); });
+};
+
+/* --- Materi (staff) --- */
+A.saveBaca = function () {
+  if (busy) return;
+  var judul = $('#fb-judul').value.trim(), teks = $('#fb-teks').value.trim(), f = $('#fb-file').files[0];
+  if (S.user.role === 'admin' && !$('#fb-kelas')) { toast('Belum ada kelas.', true); return; }
+  if (!judul) { toast('Judul wajib diisi.', true); return; }
+  if (!teks && !f) { toast('Isi teks bacaan atau pilih lampiran.', true); return; }
+  var payload = { kelas: formKelas('fb-kelas'), judul: judul, instruksi: $('#fb-instr').value.trim(), teks: teks };
+  setBusy(true);
+  prepFile(f).then(function (file) {
+    setBusy(false);
+    if (file) payload.file = file;
+    return act('saveMateri', payload, 'Tugas membaca tersimpan.');
+  }, function (e) { setBusy(false); toast(e.message, true); return null; }).then(function (d) {
+    if (d) { S.ui.formBaca = false; go('baca', true); }
+  });
+};
+A.rekap = function (b) {
+  var id = b.getAttribute('data-id'), box = $('#rekap-' + id);
+  if (box.innerHTML) { box.innerHTML = ''; return; }
+  act('getRekap', { materiId: id }).then(function (d) { if (d) box.innerHTML = renderRekap(d); });
+};
+A.delMateri = function (b) {
+  if (!confirm('Hapus tugas membaca ini beserta semua laporan orang tua?')) return;
+  act('deleteMateri', { id: b.getAttribute('data-id') }, 'Tugas dihapus.').then(function (d) { if (d) go('baca', true); });
+};
+
+/* --- Laporan (ortu) --- */
+A.kirimLapor = function (b) {
+  var id = b.getAttribute('data-id');
+  var r = document.querySelector('input[name="tk-' + id + '"]:checked');
+  if (!r) { toast('Pilih tingkat kelancaran membaca.', true); return; }
+  act('submitLaporan', { materiId: id, tingkat: r.value, catatan: $('#ct-' + id).value.trim() }, 'Laporan terkirim. Terima kasih!').then(function (d) { if (d) go('baca', true); });
+};
+
+/* --- Soal (staff) --- */
+A.saveSoal = function () {
+  if (S.user.role === 'admin' && !$('#fs-kelas')) { toast('Belum ada kelas.', true); return; }
+  var judul = $('#fs-judul').value.trim();
+  if (!judul) { toast('Judul tugas wajib diisi.', true); return; }
+  var pg = [], es = [], i;
+  for (i = 0; i < 10; i++) pg.push({ q: $('#pq-' + i).value, a: $('#pa-' + i).value, b: $('#pb-' + i).value, c: $('#pc-' + i).value, d: $('#pd-' + i).value, k: $('#pk-' + i).value });
+  for (i = 0; i < 5; i++) es.push({ q: $('#eq-' + i).value });
+  act('saveTugas', { kelas: formKelas('fs-kelas'), judul: judul, pg: pg, esai: es }, 'Tugas soal tersimpan.').then(function (d) {
+    if (d) { S.ui.formSoal = false; go('soal', true); }
+  });
+};
+A.hasil = function (b) {
+  var id = b.getAttribute('data-id'), box = $('#hasil-' + id);
+  if (box.innerHTML) { box.innerHTML = ''; return; }
+  act('getHasil', { tugasId: id }).then(function (d) { if (d) box.innerHTML = renderHasil(d); });
+};
+A.delTugas = function (b) {
+  if (!confirm('Hapus tugas soal ini beserta semua jawaban murid?')) return;
+  act('deleteTugas', { id: b.getAttribute('data-id') }, 'Tugas dihapus.').then(function (d) { if (d) go('soal', true); });
+};
+
+/* --- Soal (ortu) --- */
+A.openSoal = function (b) { S.ui.openSoal = b.getAttribute('data-id'); rerender(); };
+A.closeSoal = function () { S.ui.openSoal = null; rerender(); };
+A.kirimSoal = function (b) {
+  var id = b.getAttribute('data-id');
+  var t = (S.last.d.tugas || []).filter(function (x) { return x.id === id; })[0];
+  if (!t) return;
+  var pg = [], es = [], i, j, el;
+  for (i = 0; i < t.pg.length; i++) {
+    var r = document.querySelector('input[name="pg-' + id + '-' + i + '"]:checked');
+    if (!r) { toast('Soal PG nomor ' + (i + 1) + ' belum dijawab.', true); el = $('#qq-' + id + '-' + i); if (el) el.scrollIntoView({ block: 'center' }); return; }
+    pg.push(r.value);
+  }
+  for (j = 0; j < t.esai.length; j++) {
+    var v = $('#es-' + id + '-' + j).value.trim();
+    if (!v) { toast('Soal esai nomor ' + (j + 1) + ' belum dijawab.', true); el = $('#qe-' + id + '-' + j); if (el) el.scrollIntoView({ block: 'center' }); return; }
+    es.push(v);
+  }
+  if (!confirm('Kirim jawaban sekarang? Jawaban tidak bisa diubah setelah dikirim.')) return;
+  act('submitJawaban', { tugasId: id, pg: pg, esai: es }).then(function (d) {
+    if (!d) return;
+    S.ui.openSoal = null;
+    go('soal', true);
+    showModal('<h2>Jawaban terkirim ✅</h2>' + (d.total ? '<div class="big">' + esc(d.skor) + '</div><p style="text-align:center">Skor PG: ' + d.benar + ' dari ' + d.total + ' benar</p>' : '<p>Jawaban esai sudah diterima guru.</p>') +
+      (d.total && d.adaEsai ? '<p class="muted" style="text-align:center">Jawaban esai akan diperiksa guru.</p>' : '') +
+      '<div class="actions"><button class="btn primary block" data-act="closeModal">Tutup</button></div>');
+  });
+};
+
+/* --- Diskusi --- */
+A.kirimTopik = function () {
+  var isi = $('#dk-isi').value.trim();
+  if (!isi) { toast('Pesan tidak boleh kosong.', true); return; }
+  var m = $$('.mchk').filter(function (c) { return c.checked; }).map(function (c) { return c.value; });
+  act('postDiskusi', { kelas: curKelas(), isi: isi, mentions: m }, 'Pesan terkirim.').then(function (d) { if (d) go('diskusi', true); });
+};
+A.openReply = function (b) { S.ui.replyTo = b.getAttribute('data-id') || null; rerender(); };
+A.kirimBalas = function (b) {
+  var id = b.getAttribute('data-id'), isi = $('#rp-' + id).value.trim();
+  if (!isi) { toast('Balasan tidak boleh kosong.', true); return; }
+  act('postDiskusi', { kelas: curKelas(), isi: isi, parentId: id }, 'Balasan terkirim.').then(function (d) {
+    if (d) { S.ui.replyTo = null; go('diskusi', true); }
+  });
+};
+A.delDiskusi = function (b) {
+  if (!confirm('Hapus pesan ini? Balasan di bawahnya (jika ini pesan utama) ikut terhapus.')) return;
+  act('deleteDiskusi', { id: b.getAttribute('data-id') }, 'Pesan dihapus.').then(function (d) { if (d) go('diskusi', true); });
+};
+
+/* --- Pengguna --- */
+A.ufilter = function (b) { S.ui.userFilter = b.getAttribute('data-f'); rerender(); };
+A.editUser = function (b) {
+  var id = b.getAttribute('data-id');
+  var u = S.users.filter(function (x) { return x.id === id; })[0];
+  if (!u) return;
+  S.ui.userDraft = u; S.ui.formUser = true; rerender(); window.scrollTo(0, 0);
+};
+A.cancelUser = function () { S.ui.formUser = false; S.ui.userDraft = null; rerender(); };
+A.saveUser = function (b) {
+  var role = $('#fu-role').value;
+  var p = {
+    id: b.getAttribute('data-id'), role: role, nama: $('#fu-nama').value.trim(), username: $('#fu-user').value.trim(), pin: $('#fu-pin').value.trim(),
+    namaAnak: role === 'ortu' ? $('#fu-anak').value.trim() : '', kelas: role === 'admin' ? '' : $('#fu-kelas').value.trim()
+  };
+  var isNew = !p.id;
+  act('saveUser', p, isNew ? 'Akun dibuat. Beri tahu username dan PIN kepada pengguna.' : 'Perubahan tersimpan.').then(function (d) {
+    if (!d) return;
+    S.ui.formUser = false; S.ui.userDraft = null;
+    loadKelas();
+    go('user', true);
+  });
+};
+A.delUser = function (b) {
+  var id = b.getAttribute('data-id');
+  var u = S.users.filter(function (x) { return x.id === id; })[0];
+  if (!confirm('Hapus akun ' + (u ? u.nama : '') + '? Data laporan dan jawabannya tetap tersimpan.')) return;
+  act('deleteUser', { id: id }, 'Akun dihapus.').then(function (d) { if (d) { loadKelas(); go('user', true); } });
+};
+
+/* ================================================================
+   EVENT GLOBAL
+   ================================================================ */
+document.addEventListener('click', function (e) {
+  var m = $('#modal');
+  if (e.target === m) { closeModal(); return; }
+  var b = e.target.closest('[data-act]');
+  if (!b) return;
+  var name = b.getAttribute('data-act');
+  if (busy > 0) return;
+  if (A[name]) { e.preventDefault(); A[name](b, e); }
+});
+
+document.addEventListener('submit', function (e) {
+  if (e.target.id === 'loginForm') { e.preventDefault(); if (!busy) doLogin(); }
+});
+
+document.addEventListener('change', function (e) {
+  var t = e.target;
+  if (t.id === 'scopeSel') { S.kelas = t.value; go(S.tab); return; }
+  if (t.id === 'fu-role') { syncUserForm(); return; }
+  if (t.id === 'm-all') { $$('.mchk').forEach(function (c) { c.checked = t.checked; }); }
+  if (t.id === 'm-all' || (t.classList && t.classList.contains('mchk'))) {
+    var n = $$('.mchk').filter(function (c) { return c.checked; }).length;
+    var el = $('#mcount'); if (el) el.textContent = n;
+  }
+});
+
+document.addEventListener('input', function (e) {
+  var t = e.target, m;
+  if (t.id === 'usearch') {
+    var q = t.value.trim().toLowerCase();
+    $$('#ulist .card').forEach(function (c) { c.style.display = !q || c.getAttribute('data-s').indexOf(q) >= 0 ? '' : 'none'; });
+    return;
+  }
+  m = /^p([qabcdk])-(\d)$/.exec(t.id || '');
+  if (m) {
+    var i = m[2];
+    var ok = $('#pq-' + i).value.trim() && $('#pa-' + i).value.trim() && $('#pb-' + i).value.trim() && $('#pc-' + i).value.trim() && $('#pd-' + i).value.trim() && $('#pk-' + i).value;
+    $('#pgf-' + i).textContent = ok ? '✓ terisi' : '';
+  }
+  m = /^eq-(\d)$/.exec(t.id || '');
+  if (m) $('#esf-' + m[1]).textContent = t.value.trim() ? '✓ terisi' : '';
+});
+document.addEventListener('change', function (e) {
+  if (/^pk-\d$/.test(e.target.id || '')) e.target.dispatchEvent(new Event('input', { bubbles: true }));
+});
+
+window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); installEvt = e; });
+window.addEventListener('appinstalled', function () { installEvt = null; });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+/* ================================================================
+   MULAI
+   ================================================================ */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+}
+if (loadSession()) startApp(); else renderLogin();
+
+})();
+</script>
+</body>
+</html>
